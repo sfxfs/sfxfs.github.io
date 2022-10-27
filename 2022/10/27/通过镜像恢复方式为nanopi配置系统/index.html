@@ -8,12 +8,12 @@
   <meta name="author" content="FXF" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
     
-      FXF&#39;s Blog
+      通过镜像恢复方式为nanopi配置系统 
+      
+      
     
   </title>
 
@@ -33,10 +33,10 @@
 
 
   
-    
-<link rel="stylesheet" href="/css/index.css">
 
   
+    
+<link rel="stylesheet" href="/css/post.css">
 
   
 
@@ -98,72 +98,57 @@
 
 
       <div class="main">
-        <div>
-  <ul>
-    <!-- 遍历渲染文章 -->
-    
-    <li>
-      <h3>Sep 21, 2022</h3>
-      <h2>
-        <a href="/2022/09/21/linux%E4%B8%8B%E7%BB%99%E5%8D%95%E7%89%87%E6%9C%BA%E7%83%A7%E5%BD%95%E7%A8%8B%E5%BA%8F%E6%97%B6%E6%8F%90%E7%A4%BA%E6%B2%A1%E6%9C%89%E6%9D%83%E9%99%90/">
-          
-            
-              <span>linux下给单片机烧录程序时提示没有权限</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Sep 17, 2022</h3>
-      <h2>
-        <a href="/2022/09/17/C-%E4%B8%8B%E8%BF%94%E5%9B%9E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%87%BD%E6%95%B0/">
-          
-            
-              <span>C++下返回引用类型的函数</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Sep 09, 2022</h3>
-      <h2>
-        <a href="/2022/09/09/Aroma%E9%A6%99%E6%B0%94-%E9%98%BF%E7%BD%97%E9%A9%AC-%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">
-          
-            
-              <span>Aroma香气(阿罗马)安装教程</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Sep 08, 2022</h3>
-      <h2>
-        <a href="/2022/09/08/%E5%9C%A8C%E8%AF%AD%E8%A8%80%E4%B8%8B%E5%9C%A8%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%8A%A0%E5%85%A5%E5%87%BD%E6%95%B0/">
-          
-            
-              <span>在C语言下在结构体内加入函数</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-  </ul>
-  
-  <nav class="post-navigation">
-    
-      <a id="prev" class="index-nav" href="/">&lt;&nbsp;NEWER</a>
-    
-    
-  </nav>
-</div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Oct 27, 2022
+  </h3>
+  <h1>
+    通过镜像恢复方式为nanopi配置系统
+  </h1>
+  <div class="content markdown-body">
+    <h2 id="1-请烧录如下固件"><a href="#1-请烧录如下固件" class="headerlink" title="1.请烧录如下固件"></a>1.请烧录如下固件</h2><p><code>nanopi-neo-core_eflasher_friendlycore-xenial_4.14_armhf_YYYYMMDD.img.zip</code></p>
+<p>烧录完的SD卡将会有以下三个分区(SD必须大于16G)</p>
+<ul>
+<li>boot</li>
+<li>rootfs</li>
+<li>FriendlyARM</li>
+</ul>
+<p>Windows下可能需要相关软件才能读取到所有分区。</p>
+<h2 id="2-通过串口控制nanopi"><a href="#2-通过串口控制nanopi" class="headerlink" title="2.通过串口控制nanopi"></a>2.通过串口控制nanopi</h2><p>请按照图示连接nanopi，串口请连接到UART0，波特率必须为115200</p>
+<p><img src="/%E9%80%9A%E8%BF%87%E9%95%9C%E5%83%8F%E6%81%A2%E5%A4%8D%E6%96%B9%E5%BC%8F%E4%B8%BAnanopi%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/NEO_Core_pinout-02.jpg"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E9%95%9C%E5%83%8F%E6%81%A2%E5%A4%8D%E6%96%B9%E5%BC%8F%E4%B8%BAnanopi%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/USB2UART-NEO-Core.jpg"></p>
+<p>插入SD卡，并通过串口连接到电脑进入终端（如果串口显示为空可以尝试回车几次）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">普通用户：</span><br><span class="line">	用户名: pi</span><br><span class="line">	密码: pi</span><br><span class="line"></span><br><span class="line">Root用户：</span><br><span class="line">	用户名: root</span><br><span class="line">	密码: fa</span><br></pre></td></tr></table></figure>
+
+<p>在终端以超级管理员身份执行指令 <code>eflasher</code> 后有如下界面：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">----------------------------------------------------------------------</span><br><span class="line">  EFlasher v1.2 b190111 running on NanoPC-T4</span><br><span class="line">    Doc: http://wiki.friendlyelec.com/wiki/index.php/EFlasher</span><br><span class="line">    eMMC: 14.56 GB</span><br><span class="line">----------------------------------------------------------------------</span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">Select an OS to install:</span></span><br><span class="line">    1) Android 8</span><br><span class="line">   </span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">Select your backup target device:</span></span><br><span class="line">     tf) [*] TF card  (/dev/mmcblk0p1 - 4.27 GB free - 5.67 GB total - fuseblk)</span><br><span class="line">    usb) [ ] USB disk  (&lt;none&gt;)</span><br><span class="line">   </span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">Backup eMMC flash to TF card:</span></span><br><span class="line">    Not enough free disk space on your TF card</span><br><span class="line">   </span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">Restore eMMC flash from backup file:</span></span><br><span class="line">    No backup files found</span><br><span class="line">   </span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">Configure automatic job:</span></span><br><span class="line">    aui) Automatic installing (Curr:Off)</span><br><span class="line">    aur) Automatic restoring (Curr:Off)</span><br><span class="line">   </span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">Format drive</span></span><br><span class="line">    ftf) Format TF card back to original size</span><br><span class="line">----------------------------------------------------------------------</span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; Enter an option (1/tf/usb/aui/aur/ftf) :</span></span><br></pre></td></tr></table></figure>
+
+<p>若SD卡为第一次使用请先输入ftf，然后关机转至电脑，向SD第三个分区放入 <code>nanopi-neo-core-emmc.raw</code> 备份文件再重新开启并进入 nanopi 执行 <code>r1</code> 选项，否则直接输入 <code>r1</code> 选项并回车即可烧写镜像。</p>
+<p>注意：烧写完后的nanopi为<code>静态ip 192.168.137.219</code></p>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2022/10/26/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B9%9D-%E9%98%9F%E5%88%97%E5%9C%A8%E4%BB%BB%E5%8A%A1%E9%97%B4%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE/">OLDER&nbsp;&gt;</a>
+      
+        
+            
+</div>
         <div class="footer">
   
     <div class="footer-more">
