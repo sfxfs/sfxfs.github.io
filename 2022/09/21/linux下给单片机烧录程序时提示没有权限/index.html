@@ -124,8 +124,8 @@
     <p>  这是因为该用户所在的用户组不包含USB的相关权限，我们可以将用户添加到有权限的用户组，或者将对应串口开放给所有人使用。</p>
 <h2 id="1-添加到dialout用户组"><a href="#1-添加到dialout用户组" class="headerlink" title="1. 添加到dialout用户组"></a>1. 添加到dialout用户组</h2><p>打开终端输入:<code>sudo usermod -aG dialout USERNAME</code></p>
 <h2 id="2-开放串口权限"><a href="#2-开放串口权限" class="headerlink" title="2. 开放串口权限"></a>2. 开放串口权限</h2><p>添加如下内容到 <em>&#x2F;etc&#x2F;udev&#x2F;rules.d&#x2F;</em> 下的rules文件:</p>
-<p><code>KERNEL==“ttyACM[0-9]*”, MODE=“0666”</code></p>
-<p><code>KERNEL==“ttyUSB[0-9]*”, MODE=“0666”</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">KERNEL==“ttyACM[0-9]*”, MODE=“0666”</span><br><span class="line">KERNEL==“ttyUSB[0-9]*”, MODE=“0666”</span><br></pre></td></tr></table></figure>
+
 <p>最好自己创建一个新文件,名称要符合规范。</p>
 <h2 id="3-单独给串口开放权限"><a href="#3-单独给串口开放权限" class="headerlink" title="3. 单独给串口开放权限"></a>3. 单独给串口开放权限</h2><p>使用管理员权限:</p>
 <p><code>sudo chmod 777 /dev/ttyACM0</code></p>
