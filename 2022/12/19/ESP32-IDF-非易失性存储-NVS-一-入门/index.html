@@ -8,12 +8,12 @@
   <meta name="author" content="FXF" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
     
-      FXF&#39;s Blog
+      ESP32-IDF 非易失性存储 NVS (一) 入门 
+      
+      
     
   </title>
 
@@ -33,10 +33,10 @@
 
 
   
-    
-<link rel="stylesheet" href="/css/index.css">
 
   
+    
+<link rel="stylesheet" href="/css/post.css">
 
   
 
@@ -98,152 +98,77 @@
 
 
       <div class="main">
-        <div>
-  <ul>
-    <!-- 遍历渲染文章 -->
-    
-    <li>
-      <h3>Oct 27, 2022</h3>
-      <h2>
-        <a href="/2022/10/27/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%8D%81-%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BF%A1%E5%8F%B7%E9%87%8F/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(十)--二进制信号量</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 27, 2022</h3>
-      <h2>
-        <a href="/2022/10/27/%E9%80%9A%E8%BF%87%E9%95%9C%E5%83%8F%E6%81%A2%E5%A4%8D%E6%96%B9%E5%BC%8F%E4%B8%BAnanopi%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/">
-          
-            
-              <span>通过镜像恢复方式为nanopi配置系统</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 26, 2022</h3>
-      <h2>
-        <a href="/2022/10/26/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B9%9D-%E9%98%9F%E5%88%97%E5%9C%A8%E4%BB%BB%E5%8A%A1%E9%97%B4%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(九)--队列在任务间传输数据</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 25, 2022</h3>
-      <h2>
-        <a href="/2022/10/25/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%85%AB-%E7%9C%8B%E9%97%A8%E7%8B%97/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(八)--看门狗</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 21, 2022</h3>
-      <h2>
-        <a href="/2022/10/21/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%83-%E4%BB%BB%E5%8A%A1%E4%BC%98%E5%85%88%E7%BA%A7/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(七)--任务优先级</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 21, 2022</h3>
-      <h2>
-        <a href="/2022/10/21/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%85%AD-%E4%BB%BB%E5%8A%A1%E7%9A%84%E7%8A%B6%E6%80%81%E5%92%8C%E7%AE%A1%E7%90%86/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(六)--任务的状态和管理</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 21, 2022</h3>
-      <h2>
-        <a href="/2022/10/21/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%BA%94-%E4%BB%BB%E5%8A%A1%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(五)--任务内存优化</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 21, 2022</h3>
-      <h2>
-        <a href="/2022/10/21/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%BA%8C-MUTEX%E4%BA%92%E6%96%A5%E9%87%8F%E7%9A%84%E5%BA%94%E7%94%A8/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(二)--MUTEX互斥量的应用</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 21, 2022</h3>
-      <h2>
-        <a href="/2022/10/21/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%89-%E4%BB%BB%E5%8A%A1%E7%AD%89%E5%BE%85%E7%BB%9D%E5%AF%B9%E7%9A%84%E6%97%B6%E9%97%B4/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(三)--任务等待绝对的时间</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-    <li>
-      <h3>Oct 21, 2022</h3>
-      <h2>
-        <a href="/2022/10/21/ESP32-FreeRTOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%9B%9B-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E5%BA%94%E7%94%A8/">
-          
-            
-              <span>ESP32-FreeRTOS学习笔记(四)--软件定时器的应用</span>
-            
-          
-        </a>
-      </h2>
-    </li>
-    
-  </ul>
-  
-  <nav class="post-navigation">
-    
-      <a id="prev" class="index-nav" href="/">&lt;&nbsp;NEWER</a>
-    
-    
-      <a id="next" class="index-nav" href="/page/3/">OLDER&nbsp;&gt;</a>
-    
-  </nav>
-</div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Dec 19, 2022
+  </h3>
+  <h1>
+    ESP32-IDF 非易失性存储 NVS (一) 入门
+  </h1>
+  <div class="content markdown-body">
+    <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>NVS格式就是一种flash的文件管理方式，因为他自身这种键值对的数据结构有较大的空间开销，所有不适合很长的数据（重复的key会浪费空间），而适合一对一对的这种短的数据（优势应该是方便查管理）.在ESP32上NVS是基础，比如WIFI都会使用到NVS来存储配置文件。<a target="_blank" rel="noopener" href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32/api-reference/storage/nvs_flash.html">乐鑫官方文档</a></p>
+<h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nvs_flash_init()</td>
+<td>挂载NVS</td>
+</tr>
+<tr>
+<td>nvs_flash_deinit()</td>
+<td>卸载NVS</td>
+</tr>
+<tr>
+<td>nvs_open(const char* namespace_name, nvs_open_mode_t open_mode, nvs_handle_t *out_handle)</td>
+<td>打开对应namespace的NVS</td>
+</tr>
+<tr>
+<td>nvs_close(nvs_handle_t *out_handle)</td>
+<td>关闭NVS</td>
+</tr>
+<tr>
+<td>nvs_get_xx(nvs_handle_t c_handle, const char* key, xx* out_value)</td>
+<td>获取数据(如果对应key数据不存在则out_value不会被修改)</td>
+</tr>
+<tr>
+<td>nvs_set_xx(nvs_handle_t handle, const char* key, xx value))</td>
+<td>写入数据</td>
+</tr>
+<tr>
+<td>nvs_commit(nvs_handle_t handle)</td>
+<td>写入所有数据(加在所有set后面)</td>
+</tr>
+</tbody></table>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos/FreeRTOS.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos/task.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;nvs.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;nvs_flash.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;esp_log.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NS_TEST <span class="string">&quot;ns-test&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KEY_TEST <span class="string">&quot;key-test&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">nvs_handle_t</span> testhandle;</span><br><span class="line"></span><br><span class="line"><span class="type">uint16_t</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">app_main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    vTaskDelay(<span class="number">1000</span>/portTICK_PERIOD_MS);</span><br><span class="line">    nvs_flash_init();</span><br><span class="line">    nvs_open(NS_TEST, NVS_READWRITE, &amp;testhandle);</span><br><span class="line">    nvs_get_u16(testhandle, KEY_TEST, &amp;count);</span><br><span class="line">    ESP_LOGI(<span class="string">&quot;NVS&quot;</span>, <span class="string">&quot;the count %d&quot;</span>, count);</span><br><span class="line">    nvs_set_u16(testhandle, KEY_TEST, ++count);</span><br><span class="line">    nvs_commit(testhandle);</span><br><span class="line">    nvs_close(testhandle);</span><br><span class="line">    nvs_flash_deinit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2022/12/17/ESP32-IDF-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%8F%9C%E5%8D%95-Menuconfig-%E5%85%A5%E9%97%A8/">OLDER&nbsp;&gt;</a>
+      
+        
+            
+</div>
         <div class="footer">
   
     <div class="footer-more">
