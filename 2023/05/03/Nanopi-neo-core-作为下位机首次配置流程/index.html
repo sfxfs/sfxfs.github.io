@@ -129,11 +129,11 @@
 <li>水下机器人主板（提供网口和供电）</li>
 </ol>
 <h2 id="软件准备"><a href="#软件准备" class="headerlink" title="软件准备"></a>软件准备</h2><ol>
-<li>安装 SSH 软件</li>
-<li>串口终端（如 <code>putty</code>）</li>
+<li>安装 SSH 软件（较新的 Windows 系统一般自带，也可以去下载专门的 SSH 软件，如：<code>putty</code> 、<code>finalshell</code>、<code>MobXterm</code>等等）</li>
+<li>串口终端（如 <code>putty</code> 、<code>MobXterm</code> 等等）</li>
 <li>前往 <a target="_blank" rel="noopener" href="https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO_Core/zh">官方 WiKi</a> 下载系统镜像，注意要下载 带 eflasher 的 Ubuntu xenial 4.14 ，即文件名类似于 <code>h3_ eflasher friendlycore-xenial_ 4.14_ armhf 20210618.img.zip</code> 的镜像文件</li>
 </ol>
-<h1 id="开始烧录固件"><a href="#开始烧录固件" class="headerlink" title="开始烧录固件"></a>开始烧录固件</h1><p>（新的 Nano Pi 会内置该固件，可以直接跳到<strong>系统配置</strong>）</p>
+<h1 id="开始烧录固件"><a href="#开始烧录固件" class="headerlink" title="开始烧录固件"></a>开始烧录固件</h1><p>（全新的 Nano Pi 会内置该固件，可以直接跳到<strong>系统配置</strong>）</p>
 <h2 id="向-SD-卡写入镜像"><a href="#向-SD-卡写入镜像" class="headerlink" title="向 SD 卡写入镜像"></a>向 SD 卡写入镜像</h2><p>使用镜像写入工具（如 <code>win32diskimager</code>），选择指定镜像烧录（烧录前请确保 SD 卡只有一个分区）</p>
 <h2 id="使用串口连接-Nano-Pi"><a href="#使用串口连接-Nano-Pi" class="headerlink" title="使用串口连接 Nano Pi"></a>使用串口连接 Nano Pi</h2><p>请将 USB 转串口连接到 Nano Pi 的 RX0 和 TX0 引脚，并且共地，引脚图如下：</p>
 <p><img src="https://wiki.friendlyelec.com/wiki/images/5/53/NEO_Core_pinout-02.jpg"></p>
@@ -144,7 +144,7 @@
 </li>
 <li><p>将 USB 转串口连接到电脑的串口终端</p>
 </li>
-<li><p>进入系统后在终端输入 <code>su root</code> 切换 root 用户，后执行 <code>eflasher</code> 进入如下界面：<img src="https://wiki.friendlyelec.com/wiki/images/0/09/Eflasher_friendlycore1.jpg"></p>
+<li><p>进入系统后在终端输入 <code>su root</code> 切换 root 用户，后执行 <code>eflasher</code> 命令进入如下界面：<img src="https://wiki.friendlyelec.com/wiki/images/0/09/Eflasher_friendlycore1.jpg"></p>
 </li>
 <li><p>输入“１”后按回车，选择烧写friendlycore系统到eMMC上后，会提示如下信息：<img src="https://wiki.friendlyelec.com/wiki/images/6/60/Eflasher_friendlycore2_h3.jpg"></p>
 </li>
