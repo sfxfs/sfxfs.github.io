@@ -138,7 +138,7 @@
 <h2 id="使用串口连接-Nano-Pi"><a href="#使用串口连接-Nano-Pi" class="headerlink" title="使用串口连接 Nano Pi"></a>使用串口连接 Nano Pi</h2><p>请将 USB 转串口连接到 Nano Pi 的 RX0 和 TX0 引脚，并且共地，引脚图如下：</p>
 <p><img src="https://wiki.friendlyelec.com/wiki/images/5/53/NEO_Core_pinout-02.jpg"></p>
 <h2 id="电脑连接SBC"><a href="#电脑连接SBC" class="headerlink" title="电脑连接SBC"></a>电脑连接SBC</h2><ol>
-<li><p>将烧录好的 SD 卡插入Nano Pi</p>
+<li><p>将烧录好的 SD 卡插入 Nano Pi</p>
 </li>
 <li><p>使用 Nano Pi 上的 USB 给板子供电</p>
 </li>
@@ -146,12 +146,12 @@
 </li>
 <li><p>进入系统后在终端输入 <code>su root</code> 切换 root 用户，后执行 <code>eflasher</code> 命令进入如下界面：<img src="https://wiki.friendlyelec.com/wiki/images/0/09/Eflasher_friendlycore1.jpg"></p>
 </li>
-<li><p>输入“１”后按回车，选择烧写friendlycore系统到eMMC上后，会提示如下信息：<img src="https://wiki.friendlyelec.com/wiki/images/6/60/Eflasher_friendlycore2_h3.jpg"></p>
+<li><p>输入“１”后按回车，选择烧写 friendlycore 系统到 eMMC 上后，会提示如下信息：<img src="https://wiki.friendlyelec.com/wiki/images/6/60/Eflasher_friendlycore2_h3.jpg"></p>
 </li>
 <li><p>输入“yes”，确定进行烧写：</p>
 <p><img src="https://wiki.friendlyelec.com/wiki/images/0/0c/Eflasher_friendlycore3.jpg"></p>
 </li>
-<li><p>等待烧写完毕后，断电并从卡槽中取出TF卡。</p>
+<li><p>等待烧写完毕后，断电并从卡槽中取出 TF 卡。</p>
 </li>
 </ol>
 <h1 id="系统配置"><a href="#系统配置" class="headerlink" title="系统配置"></a>系统配置</h1><h2 id="硬件连接"><a href="#硬件连接" class="headerlink" title="硬件连接"></a>硬件连接</h2><p>将 Nano Pi 插入调试主板后，给其供电并连接网口至路由器</p>
@@ -173,7 +173,7 @@
 </li>
 <li><p>显示 <em>构建完成</em> 后，输入命令 <code>make</code> 后<strong>没有错误</strong>后，再输入一次 <code>make</code> 就会产生可执行文件 <code>rovmaster</code></p>
 </li>
-<li><p>修改静态 IP ，输入命令 <code>sudo nano /etc/network/interfaces</code> 后将文件内容修改为：</p>
+<li><p>修改静态 IP ，输入命令 <code>sudo nano /etc/network/interfaces</code> 后将原文件内容注释掉后加上：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug eth0</span><br><span class="line">iface eth0 inet static</span><br><span class="line">address 192.168.137.219</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.137.1</span><br><span class="line">dns-nameservers 192.168.137.1</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>配置结束</p>
