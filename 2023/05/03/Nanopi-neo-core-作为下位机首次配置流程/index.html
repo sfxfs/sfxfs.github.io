@@ -144,7 +144,7 @@
 </li>
 <li><p>将 USB 转串口连接到电脑的串口终端</p>
 </li>
-<li><p>进入系统后在终端输入 <code>su root</code> 切换 root 用户，后执行 <code>eflasher</code> 命令进入如下界面：<img src="https://wiki.friendlyelec.com/wiki/images/0/09/Eflasher_friendlycore1.jpg"></p>
+<li><p>输入账户密码进行登陆（用户账号和密码都是 <code>pi</code> ，root 用户密码是 <code>fa</code>），进入系统后在终端输入 <code>su root</code> 切换 root 用户，后执行 <code>eflasher</code> 命令进入如下界面：<img src="https://wiki.friendlyelec.com/wiki/images/0/09/Eflasher_friendlycore1.jpg"></p>
 </li>
 <li><p>输入“１”后按回车，选择烧写 friendlycore 系统到 eMMC 上后，会提示如下信息：<img src="https://wiki.friendlyelec.com/wiki/images/6/60/Eflasher_friendlycore2_h3.jpg"></p>
 </li>
@@ -172,6 +172,8 @@
 <li><p>解压后进入 <strong>rov-master-main</strong> 文件夹，输入 <code>sudo chmod +x build.sh</code> 后输入 <code>sudo ./build.sh</code> 进行依赖编译</p>
 </li>
 <li><p>显示 <em>构建完成</em> 后，输入命令 <code>make</code> 后<strong>没有错误</strong>后，再输入一次 <code>make</code> 就会产生可执行文件 <code>rovmaster</code></p>
+</li>
+<li><p>使能 <code>spi1</code> 外设，输入 <code>udo npi-config</code> 命令后到 <code>\&gt; Advanced Options</code> 中使能相关 SPI 设备</p>
 </li>
 <li><p>修改静态 IP ，输入命令 <code>sudo nano /etc/network/interfaces</code> 后将原文件内容注释掉后加上：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug eth0</span><br><span class="line">iface eth0 inet static</span><br><span class="line">address 192.168.137.219</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.137.1</span><br><span class="line">dns-nameservers 192.168.137.1</span><br></pre></td></tr></table></figure>
