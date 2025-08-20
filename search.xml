@@ -4,6 +4,44 @@
   
     
     <entry>
+      <title>UART理论基础</title>
+      <link href="/2025/08/20/UART%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/"/>
+      <url>/2025/08/20/UART%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/</url>
+      
+        <content type="html"><![CDATA[<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul><li><p>串行通信：数据一位一位按时间顺序发送（与并行通信相对）。</p></li><li><p>异步（Asynchronous）：发送端和接收端不共享时钟线，而是通过预先约定的波特率（baud rate）和帧格式来同步数据采样。</p></li></ul><h2 id="物理连接与信号"><a href="#物理连接与信号" class="headerlink" title="物理连接与信号"></a>物理连接与信号</h2><ul><li><p>常见的信号线：TX（发）和 RX（收），通常两设备交叉连接（A的TX接B的RX）。</p></li><li><p>电平标准：常见TTL电平（0V ~ 5V 或 0V ~ 3.3V）和RS-232（<strong>-3<del>-15V表示 1 ，+3</del>+15V表示 0</strong> ）等。不同电平不可直接连接，需电平转换器（如 MAX232）。</p></li><li><p>差分连接：RS485差分连接（TX 包括 TXD-、TXD+，以此类推），当两条差分线之间压差为正时（如+2V～+6V）为逻辑1，反之</p></li></ul><h2 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h2><p><img src="/2025/08/20/UART%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/1.png"></p><ul><li><p>起始位：通信以发送方发送逻辑0为开始（空闲时为高电平），同时这也是为了同步采样周期。</p></li><li><p>数据位：可以为 5～8 bit，最低位优先</p></li><li><p>奇偶校验位：可以为</p><ul><li><p>关闭（0 bit）</p></li><li><p>奇校验（odd parity）：数据位的1的个数为偶，则该位为1，反之</p></li><li><p>偶校验（even parity）：数据位的1的个数为偶，则该位为0，反之</p></li></ul></li><li><p>停止位：是逻辑1，高电平，长度可以为1 bit、1.5 bit、2 bit</p></li></ul><h2 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h2><p><strong>1.RTS （Require ToSend，发送请求）为输出信号，用于指示本设备准备好可接收数据，低电平有效，低电平说明本设备可以接收数据。</strong></p><p><strong>2.CTS （Clear ToSend，发送允许）为输入信号，用于判断是否可以向对方发送数据，低电平有效，低电平说明本设备可以向对方发送数据。</strong></p><p>因此流控制可以控制数据传输的进程，防止数据的丢失。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> uart theory </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>SPI理论基础</title>
+      <link href="/2025/08/20/SPI%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/"/>
+      <url>/2025/08/20/SPI%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/</url>
+      
+        <content type="html"><![CDATA[<h2 id="SPI-协议简介"><a href="#SPI-协议简介" class="headerlink" title="SPI 协议简介"></a>SPI 协议简介</h2><p>SPI（Serial Peripheral Interface）协议是一种主从式的通信协议，主设备可以同时控制多个从设备，但每个从设备只能被一个主设备控制。SPI 协议的主要特点是通信速度快，但通信线路较多，常用于短距离的板内通信。  </p><p>SPI 通信必须由主机发起通信（无论是发送还是接收），从机被动接受。从机不能主动发送数据。  </p><h2 id="SPI-接口形式"><a href="#SPI-接口形式" class="headerlink" title="SPI 接口形式"></a>SPI 接口形式</h2><p>SPI 接口有如下几个引脚：</p><ul><li>SCLK（Serial Clock）：时钟信号</li><li>MOSI（Master Output &#x2F; Slave Input）：主设备输出、从设备输入</li><li>MISO（Master Input &#x2F; Slave Output）：主设备输入、从设备输出</li><li>CS（Chip Select）：片选信号，用于选择从设备</li></ul><p><strong>此处只讨论标准 SPI，不讨论 Dual SPI、Qual SPI 等扩展协议。</strong></p><h2 id="SPI-时序"><a href="#SPI-时序" class="headerlink" title="SPI 时序"></a>SPI 时序</h2><h3 id="片选信号"><a href="#片选信号" class="headerlink" title="片选信号"></a>片选信号</h3><p>SPI 传输过程中，输出 CS 为低电平，选择从设备。从设备只有在 CS 为低电平时，才会响应主设备的时钟信号。</p><p>在多个从设备的情况下，可以使用多个 CS 引脚，每个 CS 引脚对应一个从设备。在每次传输开始前，主设备需要先拉低对应的 CS 引脚，然后再传输数据。传输结束后，主设备需要拉高对应的 CS 引脚，释放从设备。</p><p>在单个从设备的情况下，可以直接将从设备的 CS 引脚接地，省去了主设备控制 CS 引脚的步骤。也可以使用硬件 NSS 信号作为从设备的 CS 引脚。</p><h3 id="协议参数"><a href="#协议参数" class="headerlink" title="协议参数"></a>协议参数</h3><p>SPI 协议的主要参数有：</p><ul><li>时钟极性（CPOL，Clock Polarity）：时钟空闲状态为高电平（1）还是低电平（0）</li><li>时钟相位（CPHA，Clock Phase）：数据在时钟的第一个边沿采样（0）还是第二个边沿采样（1）</li><li>时钟频率（SCLK，Serial Clock）：时钟信号的频率</li><li>传输顺序：MSB（高位，即左到右）优先还是 LSB（低位）优先</li></ul><h3 id="SPI-时序实例"><a href="#SPI-时序实例" class="headerlink" title="SPI 时序实例"></a>SPI 时序实例</h3><p>传输 0xC8，MSB 优先，SPI Mode 0（CPOL&#x3D;0，CPHA&#x3D;0）时钟空闲低电平，第一个边沿采样。<br><img src="/2025/08/20/SPI%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/SpiExample.png"></p><h3 id="时钟信号"><a href="#时钟信号" class="headerlink" title="时钟信号"></a>时钟信号</h3><p>SPI 时钟信号由主设备产生，从设备被动接收。时钟信号仅在传输数据时使用，空闲状态会维持在高电平或低电平（由时钟极性决定）。</p><h3 id="数据信号"><a href="#数据信号" class="headerlink" title="数据信号"></a>数据信号</h3><p>数据信号在时钟信号的边沿采样，具体第一边沿还是第二边沿由时钟相位决定。   </p><p>数据的比特序分为 MSB 优先 和 LSB 优先两种，双方需要提前约定。</p><h3 id="SPI-模式"><a href="#SPI-模式" class="headerlink" title="SPI 模式"></a>SPI 模式</h3><p>SPI 模式号是 CPOL 和 CPHA 的组合，一共有四种模式：</p><ul><li>Mode $0&#x3D;(00)_2$：CPOL&#x3D;0，CPHA&#x3D;0</li><li>Mode $1&#x3D;(01)_2$：CPOL&#x3D;0，CPHA&#x3D;1</li><li>Mode $2&#x3D;(10)_2$：CPOL&#x3D;1，CPHA&#x3D;0</li><li>Mode $3&#x3D;(11)_2$：CPOL&#x3D;1，CPHA&#x3D;1</li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> spi theory </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>IIC理论基础</title>
       <link href="/2025/08/19/IIC%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/"/>
       <url>/2025/08/19/IIC%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/</url>
