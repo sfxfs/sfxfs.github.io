@@ -14,7 +14,9 @@
       
         <tags>
             
-            <tag> can theory </tag>
+            <tag> can </tag>
+            
+            <tag> theory </tag>
             
         </tags>
       
@@ -33,7 +35,9 @@
       
         <tags>
             
-            <tag> c theory </tag>
+            <tag> theory </tag>
+            
+            <tag> c </tag>
             
         </tags>
       
@@ -52,7 +56,9 @@
       
         <tags>
             
-            <tag> uart theory </tag>
+            <tag> theory </tag>
+            
+            <tag> uart </tag>
             
         </tags>
       
@@ -71,7 +77,9 @@
       
         <tags>
             
-            <tag> spi theory </tag>
+            <tag> theory </tag>
+            
+            <tag> spi </tag>
             
         </tags>
       
@@ -90,7 +98,9 @@
       
         <tags>
             
-            <tag> i2c theory </tag>
+            <tag> theory </tag>
+            
+            <tag> i2c </tag>
             
         </tags>
       
@@ -109,7 +119,15 @@
       
         <tags>
             
-            <tag> linux luckfox rv1103 rv1106 wsl </tag>
+            <tag> linux </tag>
+            
+            <tag> luckfox </tag>
+            
+            <tag> rv1103 </tag>
+            
+            <tag> rv1106 </tag>
+            
+            <tag> wsl </tag>
             
         </tags>
       
@@ -128,7 +146,11 @@
       
         <tags>
             
-            <tag> linux nanopi SBC </tag>
+            <tag> linux </tag>
+            
+            <tag> nanopi </tag>
+            
+            <tag> SBC </tag>
             
         </tags>
       
@@ -147,7 +169,11 @@
       
         <tags>
             
-            <tag> linux RockPi Armbian </tag>
+            <tag> linux </tag>
+            
+            <tag> RockPi </tag>
+            
+            <tag> Armbian </tag>
             
         </tags>
       
@@ -166,7 +192,9 @@
       
         <tags>
             
-            <tag> ESP32 IDF </tag>
+            <tag> ESP32 </tag>
+            
+            <tag> IDF </tag>
             
         </tags>
       
@@ -185,7 +213,9 @@
       
         <tags>
             
-            <tag> ESP32 IDF </tag>
+            <tag> ESP32 </tag>
+            
+            <tag> IDF </tag>
             
         </tags>
       
@@ -204,7 +234,9 @@
       
         <tags>
             
-            <tag> ESP32 IDF </tag>
+            <tag> ESP32 </tag>
+            
+            <tag> IDF </tag>
             
         </tags>
       
@@ -223,7 +255,9 @@
       
         <tags>
             
-            <tag> ESP32 IDF </tag>
+            <tag> ESP32 </tag>
+            
+            <tag> IDF </tag>
             
         </tags>
       
@@ -242,7 +276,9 @@
       
         <tags>
             
-            <tag> ESP32 IDF </tag>
+            <tag> ESP32 </tag>
+            
+            <tag> IDF </tag>
             
         </tags>
       
@@ -261,7 +297,9 @@
       
         <tags>
             
-            <tag> ESP32 IDF </tag>
+            <tag> ESP32 </tag>
+            
+            <tag> IDF </tag>
             
         </tags>
       
@@ -279,6 +317,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -299,6 +339,8 @@
       
         <tags>
             
+            <tag> ESP32 </tag>
+            
             <tag> FreeRTOS </tag>
             
         </tags>
@@ -317,6 +359,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -337,6 +381,8 @@
       
         <tags>
             
+            <tag> ESP32 </tag>
+            
             <tag> FreeRTOS </tag>
             
         </tags>
@@ -355,6 +401,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -375,6 +423,8 @@
       
         <tags>
             
+            <tag> ESP32 </tag>
+            
             <tag> FreeRTOS </tag>
             
         </tags>
@@ -393,6 +443,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -413,6 +465,8 @@
       
         <tags>
             
+            <tag> ESP32 </tag>
+            
             <tag> FreeRTOS </tag>
             
         </tags>
@@ -432,7 +486,13 @@
       
         <tags>
             
-            <tag> JMU </tag>
+            <tag> nanopi </tag>
+            
+            <tag> underwater </tag>
+            
+            <tag> robot </tag>
+            
+            <tag> h3 </tag>
             
         </tags>
       
@@ -450,6 +510,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -470,6 +532,8 @@
       
         <tags>
             
+            <tag> ESP32 </tag>
+            
             <tag> FreeRTOS </tag>
             
         </tags>
@@ -488,6 +552,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -508,6 +574,8 @@
       
         <tags>
             
+            <tag> ESP32 </tag>
+            
             <tag> FreeRTOS </tag>
             
         </tags>
@@ -526,6 +594,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -546,6 +616,8 @@
       
         <tags>
             
+            <tag> ESP32 </tag>
+            
             <tag> FreeRTOS </tag>
             
         </tags>
@@ -564,6 +636,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -584,6 +658,8 @@
       
         <tags>
             
+            <tag> ESP32 </tag>
+            
             <tag> FreeRTOS </tag>
             
         </tags>
@@ -602,6 +678,8 @@
       
       
         <tags>
+            
+            <tag> ESP32 </tag>
             
             <tag> FreeRTOS </tag>
             
@@ -622,7 +700,11 @@
       
         <tags>
             
-            <tag> arduino platformio </tag>
+            <tag> linux </tag>
+            
+            <tag> arduino </tag>
+            
+            <tag> platformio </tag>
             
         </tags>
       
@@ -641,7 +723,7 @@
       
         <tags>
             
-            <tag> c++ </tag>
+            <tag> C++ </tag>
             
         </tags>
       
@@ -660,7 +742,11 @@
       
         <tags>
             
-            <tag> wiiu </tag>
+            <tag> WiiU </tag>
+            
+            <tag> Aroma </tag>
+            
+            <tag> game </tag>
             
         </tags>
       
@@ -679,7 +765,7 @@
       
         <tags>
             
-            <tag> C </tag>
+            <tag> c </tag>
             
         </tags>
       
