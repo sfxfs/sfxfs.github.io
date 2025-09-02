@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Xiao's Blog</title><meta name="author" content="Fu Xiaofeng"><meta name="copyright" content="Fu Xiaofeng"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
+<meta property="og:title" content="Xiao&#39;s Blog">
+<meta property="og:url" content="https://sfxfs.github.io/page/5/index.html">
+<meta property="og:site_name" content="Xiao&#39;s Blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sfxfs.github.io/img/butterfly-icon.png">
+<meta property="article:author" content="Fu Xiaofeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sfxfs.github.io/img/butterfly-icon.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://sfxfs.github.io/page/5/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Xiao\'s Blog',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Xiao's Blog</span></a></span><div id="menus"></div></nav><div id="site-info"><h1 id="site-title">Xiao's Blog</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/09/17/C-%E4%B8%8B%E8%BF%94%E5%9B%9E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%87%BD%E6%95%B0/" title="C++下返回引用类型的函数">C++下返回引用类型的函数</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-09-17T08:33:58.000Z" title="发表于 2022-09-17 16:33:58">2022-09-17</time></span></div><div class="content">1. 先申明一个类123456789101112131415class Test&#123;private:    int a;    int b;public:    Test(int a, int b);        Test&amp; addA(Test &amp;t);	//返回值为Test类的引用，传入参数为Test的引用        void setA(int a);    void setB(int b);    int getA();    int getB();&#125;  2. 定义一个函数123456Test&amp; Test::addA(Test&amp; t)&#123;	int a = t.getA();    this -&gt; a += a;	//即使两个变量名称一样，但this指针区分了这两个变量    return *this;	//返回整个对象本身&#125;  3. 具体应用1234567891011121314151617181920212223242526272829303132333435#include &lt;iostr...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/09/09/Aroma%E9%A6%99%E6%B0%94-%E9%98%BF%E7%BD%97%E9%A9%AC-%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" title="Aroma香气(阿罗马)安装教程">Aroma香气(阿罗马)安装教程</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-09-09T10:32:05.000Z" title="发表于 2022-09-09 18:32:05">2022-09-09</time></span></div><div class="content">1.判断你的机器状态 是否已经破解？ 提拉米苏破解 则直接拷贝增量包至SD卡根目录,提示覆盖则选择覆盖 将SD卡插入机器后,如果你的机器已经设置了开机启动提拉米苏,则在开机的同时按住X键进入选单选择aroma即可进入阿罗马系统.   脑锻炼破解，网页(固化)破解,冷启动破解等等 进入下面的破解步骤(如果为冷启动要先卸载冷启动)      2. 破解前的准备 容量大于4GB的SD卡 带有PAD的WIIU 良好的网络 提前备份好机器的NAND   以FAT32格式化SD卡后下载Aroma(阿罗马)整合包的压缩文件并解压到SD卡根目录. 保证SD卡根目录有wiiu文件夹. 将SD卡插入机器并开机. 在桌面选择进入浏览器,这将会有两种情况: 如果你为脑锻炼固化破解,则需要手动输入wiiuexploit.xyz这个网址并进入,待网页完全加载完之后后点击Run Exploit按钮即可. 如果你为网页破解(固化),则按照正常进入破解的方式即可.   这时你应该能成功进入Environment Loader选单(黑色界面如下),如果卡死请强制重启之后继续尝试.    选择第二项installer...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/09/08/%E5%9C%A8C%E8%AF%AD%E8%A8%80%E4%B8%8B%E5%9C%A8%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%8A%A0%E5%85%A5%E5%87%BD%E6%95%B0/" title="在C语言下在结构体内加入函数">在C语言下在结构体内加入函数</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-09-07T17:51:32.000Z" title="发表于 2022-09-08 01:51:32">2022-09-08</time></span></div><div class="content">前提知识Class类与Struct结构体最大的区别可能就是内部能不能有函数，在C语言下结构体虽然不能直接加入函数，但是我们可以通过指针曲线救国。 先来看一个函数指针的例子(来自c++ primer plus): 1234567891011121314151617181920212223242526272829303132333435#include &lt;iostream&gt;double betsy(int);double pam(int);void estimate(int lines,double (*pf)(int));int main()&#123;	using namespace std;	int code;	cout &lt;&lt; &quot;line of code : &quot;;	cin &gt;&gt; code;	cout &lt;&lt; &quot;betsy time : &quot;;	estimate(code, betsy);	cout &lt;&lt; &quot;pam time : &quot;;	estimate(code, ...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/4/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/#content-inner">4</a><span class="page-number current">5</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Fu Xiaofeng</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/sfxfs"><i class="fab fa-github"></i><span>关注我</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Nothing here...</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/02/%E5%A5%87%E5%BC%82%E9%80%92%E5%BD%92%E6%A8%A1%E6%9D%BF%E6%A8%A1%E5%BC%8F-CRTP/" title="奇异递归模板模式 CRTP">奇异递归模板模式 CRTP</a><time datetime="2025-09-02T07:17:50.000Z" title="发表于 2025-09-02 15:17:50">2025-09-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/02/this-auto-self-%E8%AF%A6%E8%A7%A3/" title="this auto&amp;&amp; self 详解">this auto&amp;&amp; self 详解</a><time datetime="2025-09-02T07:17:29.000Z" title="发表于 2025-09-02 15:17:29">2025-09-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/02/%E5%BC%95%E7%94%A8%E5%8C%85%E8%A3%85%E5%99%A8/" title="引用包装器">引用包装器</a><time datetime="2025-09-02T07:16:59.000Z" title="发表于 2025-09-02 15:16:59">2025-09-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/02/%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/" title="移动语义">移动语义</a><time datetime="2025-09-02T07:16:42.000Z" title="发表于 2025-09-02 15:16:42">2025-09-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/02/%E5%B7%A6%E5%80%BC%E5%92%8C%E5%8F%B3%E5%80%BC%E8%AF%A6%E8%A7%A3/" title="左值和右值详解">左值和右值详解</a><time datetime="2025-09-02T07:16:27.000Z" title="发表于 2025-09-02 15:16:27">2025-09-02</time></div></div></div></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/H3/" style="font-size: 1.1em; color: #999">H3</a> <a href="/tags/IDF/" style="font-size: 1.3em; color: #99a1ac">IDF</a> <a href="/tags/WiiU/" style="font-size: 1.1em; color: #999">WiiU</a> <a href="/tags/Linux/" style="font-size: 1.23em; color: #999ea6">Linux</a> <a href="/tags/RV110x/" style="font-size: 1.1em; color: #999">RV110x</a> <a href="/tags/NanoPi/" style="font-size: 1.17em; color: #999c9f">NanoPi</a> <a href="/tags/C/" style="font-size: 1.17em; color: #999c9f">C</a> <a href="/tags/Robot/" style="font-size: 1.1em; color: #999">Robot</a> <a href="/tags/SPI/" style="font-size: 1.1em; color: #999">SPI</a> <a href="/tags/Armbian/" style="font-size: 1.1em; color: #999">Armbian</a> <a href="/tags/Script/" style="font-size: 1.1em; color: #999">Script</a> <a href="/tags/WSL/" style="font-size: 1.1em; color: #999">WSL</a> <a href="/tags/PlatformIO/" style="font-size: 1.1em; color: #999">PlatformIO</a> <a href="/tags/Game/" style="font-size: 1.1em; color: #999">Game</a> <a href="/tags/CAN/" style="font-size: 1.1em; color: #999">CAN</a> <a href="/tags/RockPi/" style="font-size: 1.1em; color: #999">RockPi</a> <a href="/tags/Aroma/" style="font-size: 1.1em; color: #999">Aroma</a> <a href="/tags/ESP32/" style="font-size: 1.5em; color: #99a9bf">ESP32</a> <a href="/tags/SBC/" style="font-size: 1.1em; color: #999">SBC</a> <a href="/tags/Arduino/" style="font-size: 1.1em; color: #999">Arduino</a> <a href="/tags/C/" style="font-size: 1.37em; color: #99a4b2">C++</a> <a href="/tags/FreeRTOS/" style="font-size: 1.43em; color: #99a6b9">FreeRTOS</a> <a href="/tags/Shell/" style="font-size: 1.1em; color: #999">Shell</a> <a href="/tags/IIC/" style="font-size: 1.1em; color: #999">IIC</a> <a href="/tags/UART/" style="font-size: 1.1em; color: #999">UART</a> <a href="/tags/Underwater/" style="font-size: 1.1em; color: #999">Underwater</a> <a href="/tags/Luckfox/" style="font-size: 1.1em; color: #999">Luckfox</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/09/">
+            <span class="card-archive-list-date">
+              九月 2025
+            </span>
+            <span class="card-archive-list-count">6</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/08/">
+            <span class="card-archive-list-date">
+              八月 2025
+            </span>
+            <span class="card-archive-list-count">6</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/11/">
+            <span class="card-archive-list-date">
+              十一月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/05/">
+            <span class="card-archive-list-date">
+              五月 2023
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/04/">
+            <span class="card-archive-list-date">
+              四月 2023
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/01/">
+            <span class="card-archive-list-date">
+              一月 2023
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/12/">
+            <span class="card-archive-list-date">
+              十二月 2022
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/11/">
+            <span class="card-archive-list-date">
+              十一月 2022
+            </span>
+            <span class="card-archive-list-count">6</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">43</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2025-09-02T07:30:15.561Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By Fu Xiaofeng</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
