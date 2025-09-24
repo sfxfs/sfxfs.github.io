@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="嵌入式开发,C++,ESP32,FreeRTOS,通信协议,编程技术" />
+  <meta name="author" content="Fu Xiaofeng" />
+  <meta name="description" content="专注于嵌入式开发、C++编程和前沿技术分享的个人技术博客" />
+  
+  
+  <title>
+    
+      CAN理论基础 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <a href="/">Xiao's Blog</a>
+</div>
+
+
+      <p class="links">
+  
+    <a title="about" target="" href="/about/">
+      <i class="iconfont icon-emoji-friendly"></i>
+    </a>
+  
+    <a title="archives" target="_blank" href="/archives/">
+      <i class="iconfont icon-bookmark"></i>
+    </a>
+  
+    <a title="github" target="_blank" href="https://github.com/sfxfs">
+      <i class="iconfont icon-github"></i>
+    </a>
+  
+    <a title="facebook" target="" href="">
+      <i class="iconfont icon-facebooksquare"></i>
+    </a>
+  
+    <a title="twitter" target="" href="">
+      <i class="iconfont icon-twitter"></i>
+    </a>
+  
+    <a title="wechat" target="" href="">
+      <i class="iconfont icon-wechat"></i>
+    </a>
+  
+    <a title="weibo" target="" href="">
+      <i class="iconfont icon-weibo"></i>
+    </a>
+  
+    <a title="rss" target="_blank" href="/atom.xml">
+      <i class="iconfont icon-rss"></i>
+    </a>
+  
+</p>
+
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Aug 21, 2025
+  </h3>
+  <h1>
+    CAN理论基础
+  </h1>
+  <div class="content markdown-body">
+    <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>CAN 定义了物理层（Physical）和数据链路层（DataLink）</p>
+<ul>
+<li>物理层：规定引脚数、如何定义0和1等等</li>
+<li>数据链路层：如何定义一个CAN帧</li>
+</ul>
+<h2 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h2><p>特性包括</p>
+<ul>
+<li>包括 CAN_Low 和 CAN_High 两个线</li>
+<li>逐位总线仲裁</li>
+<li>双绞线，差分信号</li>
+</ul>
+<p><img src="/2025/08/21/CAN%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/1.png"></p>
+<h3 id="电平"><a href="#电平" class="headerlink" title="电平"></a>电平</h3><p><img src="/2025/08/21/CAN%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/2.png"></p>
+<p>0为显性，1为隐性，即0可以把1覆盖了</p>
+<h3 id="按位仲裁"><a href="#按位仲裁" class="headerlink" title="按位仲裁"></a>按位仲裁</h3><p><img src="/2025/08/21/CAN%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/3.png"></p>
+<p>可以理解0的优先级比1高，即数字越小优先级越高；节点A它发送了1却检测到了0，那它就会停止发送了，因为有优先级更高的设备在传输</p>
+<h2 id="数据链路层（帧）"><a href="#数据链路层（帧）" class="headerlink" title="数据链路层（帧）"></a>数据链路层（帧）</h2><p>共有三种类型：</p>
+<p>其中**<code>错误帧</code><strong>、</strong><code>过载帧</code><strong>、</strong><code>帧间隔</code>**都是由硬件完成的，没有办法用软件来控制。</p>
+<p>数据帧和遥控帧有**<code>标准格式</code><strong>与</strong><code>扩展格式</code><strong>。标准格式有</strong><code>11位</code><strong>标识符，扩展格式有</strong><code>29位</code>**标识符。</p>
+<ul>
+<li>数据帧</li>
+<li>远程帧</li>
+<li>错误帧</li>
+</ul>
+<h3 id="数据帧"><a href="#数据帧" class="headerlink" title="数据帧"></a>数据帧</h3><p><img src="/2025/08/21/CAN%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/4.png"></p>
+<p><img src="/2025/08/21/CAN%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/5.png"></p>
+<p>包括</p>
+<table>
+<thead>
+<tr>
+<th>1</th>
+<th>帧起始</th>
+<th>表示帧的开始，产生一个bit的显性电平。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>仲裁段</td>
+<td>表示帧的优先级， 由标识符（ID）和传送帧类型(RTR)组成。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>控制端</td>
+<td>表示数据的字节数，由6个bit构成（4bits为DLC 0～8bytes）。IDE位用于表明此帧是标准帧还是扩展帧。</td>
+</tr>
+<tr>
+<td>4</td>
+<td>数据段</td>
+<td>数据的具体内容，可发送0～8 个字节的数据。</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CRC段</td>
+<td>用于校验传输是否正确。</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ACK段</td>
+<td>表示确认是否正常接收。</td>
+</tr>
+<tr>
+<td>7</td>
+<td>帧结束</td>
+<td>表示此帧结束。</td>
+</tr>
+</tbody></table>
+<h3 id="远程帧"><a href="#远程帧" class="headerlink" title="远程帧"></a>远程帧</h3><p>用于请求数据</p>
+<p>不包括数据区</p>
+<h3 id="错误帧"><a href="#错误帧" class="headerlink" title="错误帧"></a>错误帧</h3><p>Transmitted when a node detects a fault and cause all other nodes to detect a fault</p>
+<p>包括</p>
+<ul>
+<li>错误标志</li>
+<li>错误分割（留时间给其他设备发错误帧）</li>
+</ul>
+<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><ul>
+<li><p>配置波特率</p>
+</li>
+<li><p>配置过滤器：<strong>CAN过滤器有两种工作模式</strong>：<strong><code>列表模式</code></strong> 与 <strong><code>掩码模式</code></strong>。</p>
+<ul>
+<li>列表：列出ID名字，过滤器通过判断报文ID与其是否一致来决定是接受还是舍弃这份报文。</li>
+<li>掩码：通过确定ID特定位的值来判断报文的接受与丢弃。</li>
+</ul>
+</li>
+<li><p>之后就可以发送和接收了</p>
+</li>
+</ul>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2025/08/21/C%E8%AF%AD%E8%A8%80%E7%BB%86%E6%9E%9D%E6%9C%AB%E8%8A%82/">OLDER&nbsp;&gt;</a>
+      
+        
+          <a id="newer" class="blog-nav" href="/2025/08/25/Shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/">&lt;&nbsp;NEWER</a>
+          
+            
+</div>
+        <div class="footer">
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/sfxfs">Copyright © Xiao 2025</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/leedom92/hexo-theme-leedom">Theme by Leedom | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-box">
+        <div class="search-title">
+          <!-- <span class="search-icon-input">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </span> -->
+          
+            <input type="text" class="search-input" id="search-input" placeholder="搜索">
+          
+          <span class="search-close-icon" id="search-close-icon">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-close"></i>
+            </a>
+          </span>
+        </div>
+        <div class="search-result" id="search-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    // inputArea.onclick = function() {
+    //   getSearchFile()
+    //   this.onclick = null
+    // }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        inputArea.focus()
+        getSearchFile()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'><span></ul>";
+      // $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'><h2>" + orig_data_title + "</h2></a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<h3 class=\"search-result-abstract\">" + match_content + "...</h3>"
+                }
+                str += "<hr></li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/leedom92/hexo-theme-leedom#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>

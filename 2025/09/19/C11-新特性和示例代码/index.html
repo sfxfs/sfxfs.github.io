@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="嵌入式开发,C++,ESP32,FreeRTOS,通信协议,编程技术" />
+  <meta name="author" content="Fu Xiaofeng" />
+  <meta name="description" content="专注于嵌入式开发、C++编程和前沿技术分享的个人技术博客" />
+  
+  
+  <title>
+    
+      C11 新特性和示例代码 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <a href="/">Xiao's Blog</a>
+</div>
+
+
+      <p class="links">
+  
+    <a title="about" target="" href="/about/">
+      <i class="iconfont icon-emoji-friendly"></i>
+    </a>
+  
+    <a title="archives" target="_blank" href="/archives/">
+      <i class="iconfont icon-bookmark"></i>
+    </a>
+  
+    <a title="github" target="_blank" href="https://github.com/sfxfs">
+      <i class="iconfont icon-github"></i>
+    </a>
+  
+    <a title="facebook" target="" href="">
+      <i class="iconfont icon-facebooksquare"></i>
+    </a>
+  
+    <a title="twitter" target="" href="">
+      <i class="iconfont icon-twitter"></i>
+    </a>
+  
+    <a title="wechat" target="" href="">
+      <i class="iconfont icon-wechat"></i>
+    </a>
+  
+    <a title="weibo" target="" href="">
+      <i class="iconfont icon-weibo"></i>
+    </a>
+  
+    <a title="rss" target="_blank" href="/atom.xml">
+      <i class="iconfont icon-rss"></i>
+    </a>
+  
+</p>
+
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Sep 19, 2025
+  </h3>
+  <h1>
+    C11 新特性和示例代码
+  </h1>
+  <div class="content markdown-body">
+    <p><a target="_blank" rel="noopener" href="https://cppreference.cn/w/c/11">参考文档</a>，还可进一步了解<a target="_blank" rel="noopener" href="https://cppreference.cn/w/c/23">c23</a>（但是测试了安装的gcc和clang (2025.9.19) 编译器没有支持）</p>
+<h2 id="对齐处理（Alignment）的标准化"><a href="#对齐处理（Alignment）的标准化" class="headerlink" title="对齐处理（Alignment）的标准化"></a>对齐处理（Alignment）的标准化</h2><h4 id="Alignas-标识符"><a href="#Alignas-标识符" class="headerlink" title="_Alignas 标识符"></a><code>_Alignas</code> 标识符</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdalign.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">S</span> &#123;</span></span><br><span class="line">    <span class="type">char</span> c;</span><br><span class="line">    <span class="keyword">_Alignas</span>(<span class="number">16</span>) <span class="type">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Alignment of struct S: %zu\n&quot;</span>, <span class="keyword">alignof</span>(<span class="keyword">struct</span> S));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="alignof-运算符"><a href="#alignof-运算符" class="headerlink" title="alignof 运算符"></a><code>alignof</code> 运算符</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdalign.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Alignment of double: %zu\n&quot;</span>, <span class="keyword">alignof</span>(<span class="type">double</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="aligned-alloc-函数"><a href="#aligned-alloc-函数" class="headerlink" title="aligned_alloc 函数"></a><code>aligned_alloc</code> 函数</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">size_t</span> alignment = <span class="number">32</span>;</span><br><span class="line">    <span class="type">size_t</span> size = <span class="number">128</span>;</span><br><span class="line">    <span class="type">void</span>* ptr = aligned_alloc(alignment, size);</span><br><span class="line">    <span class="keyword">if</span> (ptr) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Aligned allocation succeeded.\n&quot;</span>);</span><br><span class="line">        <span class="built_in">free</span>(ptr);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="头文件"><a href="#头文件" class="headerlink" title="&lt;stdalign.h&gt; 头文件"></a><code>&lt;stdalign.h&gt;</code> 头文件</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdalign.h&gt;</span></span></span><br><span class="line"><span class="keyword">alignas</span>(<span class="number">16</span>) <span class="type">int</span> x;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Noreturn-函数标记"><a href="#Noreturn-函数标记" class="headerlink" title="_Noreturn 函数标记"></a><code>_Noreturn</code> 函数标记</h2><p><code>_Noreturn</code> 函数标记，类似于 gcc 的 <code>__attribute__((noreturn))</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">_Noreturn</span> <span class="type">void</span> <span class="title function_">fatal</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* msg)</span> &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Fatal error: %s\n&quot;</span>, msg);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Generic-泛型宏关键字"><a href="#Generic-泛型宏关键字" class="headerlink" title="_Generic 泛型宏关键字"></a><code>_Generic</code> 泛型宏关键字</h2><p>字符串例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如：若x为int类型，则替换 type_name(x) 为 int 类型后面的值，即 &quot;int&quot; 这个字符串</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> type_name(x) _Generic((x), \</span></span><br><span class="line"><span class="meta">    int: <span class="string">&quot;int&quot;</span>, \</span></span><br><span class="line"><span class="meta">    float: <span class="string">&quot;float&quot;</span>, \</span></span><br><span class="line"><span class="meta">    double: <span class="string">&quot;double&quot;</span>, \</span></span><br><span class="line"><span class="meta">    default: <span class="string">&quot;other&quot;</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, type_name(<span class="number">3.14</span>)); <span class="comment">// 输出 double</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, type_name(<span class="number">42</span>));   <span class="comment">// 输出 int</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>“函数重载”例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">foo_int</span><span class="params">(<span class="type">int</span> x)</span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;I am int type !!~\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">foo_double</span><span class="params">(<span class="type">double</span> x)</span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;I am double type !!~\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> foo(x) _Generic(x, int : foo_int, \</span></span><br><span class="line"><span class="meta">                          double : foo_double)(x)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    foo(<span class="number">123</span>);  <span class="comment">// foo_int(123) // I am int type !!~</span></span><br><span class="line">    foo(<span class="number">1.23</span>);  <span class="comment">// foo_double(1.23) // I am double type !!~</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="多线程（Multithreading）支持"><a href="#多线程（Multithreading）支持" class="headerlink" title="多线程（Multithreading）支持"></a>多线程（Multithreading）支持</h2><p>注意：无法在 Darwin clang 环境下使用</p>
+<h4 id="Thread-local-存储类型标识符-和-头文件"><a href="#Thread-local-存储类型标识符-和-头文件" class="headerlink" title="_Thread_local 存储类型标识符 和 &lt;threads.h&gt; 头文件"></a><code>_Thread_local</code> 存储类型标识符 和 <code>&lt;threads.h&gt;</code> 头文件</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;threads.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NUM_THREADS 4</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX_ITER 10000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">_Thread_local</span> <span class="type">int</span> counter = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> *<span class="title function_">incrementCounter</span><span class="params">(<span class="type">void</span> *thr_id)</span> &#123;</span><br><span class="line">  <span class="type">int</span> tid = (<span class="type">int</span>)thr_id;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;thread %d started incrementing ID - %lu\n&quot;</span>, tid, thrd_current());</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_ITER; ++i)</span><br><span class="line">    counter += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (<span class="type">void</span> *)counter;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span> &#123;</span><br><span class="line">  <span class="type">thrd_t</span> threads[NUM_THREADS];</span><br><span class="line">  <span class="type">int</span> rc, sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; NUM_THREADS; ++i) &#123;</span><br><span class="line">    rc = thrd_create(&amp;threads[i], (<span class="type">thrd_start_t</span>)incrementCounter, (<span class="type">void</span> *)i);</span><br><span class="line">    <span class="keyword">if</span> (rc == thrd_error) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;ERORR; thrd_create() call failed\n&quot;</span>);</span><br><span class="line">      <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> retval;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; NUM_THREADS; ++i) &#123;</span><br><span class="line">    thrd_join(threads[i], &amp;retval);</span><br><span class="line">    sum += retval;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;count = %d\n&quot;</span>, sum);</span><br><span class="line"></span><br><span class="line">  thrd_exit(EXIT_SUCCESS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">thread 0 started incrementing ID - 281473108406528</span><br><span class="line">thread 3 started incrementing ID - 281472963440896</span><br><span class="line">thread 1 started incrementing ID - 281473099952384</span><br><span class="line">thread 2 started incrementing ID - 281473091498240</span><br><span class="line">count = 40000</span><br></pre></td></tr></table></figure>
+
+<p>若<strong>不加</strong>的输出（各个线程在竞争数据）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">thread 0 started incrementing ID - 281473865281824</span><br><span class="line">thread 2 started incrementing ID - 281473848373536</span><br><span class="line">thread 1 started incrementing ID - 281473856827680</span><br><span class="line">thread 3 started incrementing ID - 281473768747296</span><br><span class="line">count = 55938</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Atomic-类型修饰符和-头文件"><a href="#Atomic-类型修饰符和-头文件" class="headerlink" title="_Atomic 类型修饰符和 &lt;stdatomic.h&gt; 头文件"></a><code>_Atomic</code> 类型修饰符和 <code>&lt;stdatomic.h&gt;</code> 头文件</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdatomic.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">_Atomic</span> <span class="type">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">()</span> &#123;</span><br><span class="line">    atomic_fetch_add(&amp;count, <span class="number">1</span>); <span class="comment">// 原子量加一</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="增强的-Unicode-支持"><a href="#增强的-Unicode-支持" class="headerlink" title="增强的 Unicode 支持"></a>增强的 Unicode 支持</h2><h4 id="char16-t-和-char32-t"><a href="#char16-t-和-char32-t" class="headerlink" title="char16_t 和 char32_t"></a><code>char16_t</code> 和 <code>char32_t</code></h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char16_t</span> utf16_str[] = <span class="string">u&quot;你好&quot;</span>;</span><br><span class="line"><span class="type">char32_t</span> utf32_str[] = <span class="string">U&quot;世界&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="头文件-1"><a href="#头文件-1" class="headerlink" title="&lt;uchar.h&gt; 头文件"></a><code>&lt;uchar.h&gt;</code> 头文件</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;uchar.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">char16_t</span> str[] = <span class="string">u&quot;hello&quot;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%zu\n&quot;</span>, <span class="keyword">sizeof</span>(str));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="删除-gets-，新增-gets-s"><a href="#删除-gets-，新增-gets-s" class="headerlink" title="删除 gets()，新增 gets_s()"></a>删除 <code>gets()</code>，新增 <code>gets_s()</code></h2><ul>
+<li><code>gets()</code> 已被删除，不再安全。</li>
+<li><code>gets_s()</code> 是 C11 增加的安全替代：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// gets_s 在部分实现中可用</span></span><br><span class="line"><span class="type">char</span> buf[<span class="number">100</span>];</span><br><span class="line">gets_s(buf, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="边界检查函数接口（如-fopen-s、strcat-s-等）"><a href="#边界检查函数接口（如-fopen-s、strcat-s-等）" class="headerlink" title="边界检查函数接口（如 fopen_s、strcat_s 等）"></a>边界检查函数接口（如 <code>fopen_s</code>、<code>strcat_s</code> 等）</h2><p>增加了<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BE%B9%E7%95%8C%E6%A3%80%E6%9F%A5">边界检查</a>函数接口，定义了新的安全的函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    FILE* fp;</span><br><span class="line">    <span class="keyword">if</span> (fopen_s(&amp;fp, <span class="string">&quot;file.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 成功打开</span></span><br><span class="line">        fclose(fp);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="浮点处理宏的增强"><a href="#浮点处理宏的增强" class="headerlink" title="浮点处理宏的增强"></a>浮点处理宏的增强</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;float.h&gt;</span></span></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Decimal digits of precision: %d\n&quot;</span>, DECIMAL_DIG);</span><br></pre></td></tr></table></figure>
+
+<p>输出：<code>Decimal digits of precision: 36</code></p>
+<hr>
+<h2 id="匿名结构体-联合体支持"><a href="#匿名结构体-联合体支持" class="headerlink" title="匿名结构体&#x2F;联合体支持"></a>匿名结构体&#x2F;联合体支持</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="type">float</span> f;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125; var;</span><br><span class="line">var.i = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="静态断言（Static-Assertion）-Static-assert"><a href="#静态断言（Static-Assertion）-Static-assert" class="headerlink" title="静态断言（Static Assertion）_Static_assert"></a>静态断言（Static Assertion）<code>_Static_assert</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">_Static_assert</span>(<span class="keyword">sizeof</span>(<span class="type">int</span>) == <span class="number">4</span>, <span class="string">&quot;int must be 4 bytes&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="新的-fopen-模式（“…x”）"><a href="#新的-fopen-模式（“…x”）" class="headerlink" title="新的 fopen 模式（“…x”）"></a>新的 fopen 模式（“…x”）</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FILE* fp = fopen(<span class="string">&quot;test.txt&quot;</span>, <span class="string">&quot;wx&quot;</span>); <span class="comment">// 仅当文件不存在才创建并写入</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="新增-quick-exit-函数"><a href="#新增-quick-exit-函数" class="headerlink" title="新增 quick_exit() 函数"></a>新增 quick_exit() 函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">cleanup</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="comment">// 仅被 quick_exit 调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    at_quick_exit(cleanup);</span><br><span class="line">    quick_exit(<span class="number">0</span>); <span class="comment">// 快速退出，不执行普通 atexit 注册的清理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2025/09/02/%E5%A5%87%E5%BC%82%E9%80%92%E5%BD%92%E6%A8%A1%E6%9D%BF%E6%A8%A1%E5%BC%8F-CRTP/">OLDER&nbsp;&gt;</a>
+      
+        
+            
+</div>
+        <div class="footer">
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/sfxfs">Copyright © Xiao 2025</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/leedom92/hexo-theme-leedom">Theme by Leedom | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-box">
+        <div class="search-title">
+          <!-- <span class="search-icon-input">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </span> -->
+          
+            <input type="text" class="search-input" id="search-input" placeholder="搜索">
+          
+          <span class="search-close-icon" id="search-close-icon">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-close"></i>
+            </a>
+          </span>
+        </div>
+        <div class="search-result" id="search-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    // inputArea.onclick = function() {
+    //   getSearchFile()
+    //   this.onclick = null
+    // }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        inputArea.focus()
+        getSearchFile()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'><span></ul>";
+      // $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'><h2>" + orig_data_title + "</h2></a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<h3 class=\"search-result-abstract\">" + match_content + "...</h3>"
+                }
+                str += "<hr></li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/leedom92/hexo-theme-leedom#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="嵌入式开发,C++,ESP32,FreeRTOS,通信协议,编程技术" />
+  <meta name="author" content="Fu Xiaofeng" />
+  <meta name="description" content="专注于嵌入式开发、C++编程和前沿技术分享的个人技术博客" />
+  
+  
+  <title>
+    
+      左值和右值详解 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <a href="/">Xiao's Blog</a>
+</div>
+
+
+      <p class="links">
+  
+    <a title="about" target="" href="/about/">
+      <i class="iconfont icon-emoji-friendly"></i>
+    </a>
+  
+    <a title="archives" target="_blank" href="/archives/">
+      <i class="iconfont icon-bookmark"></i>
+    </a>
+  
+    <a title="github" target="_blank" href="https://github.com/sfxfs">
+      <i class="iconfont icon-github"></i>
+    </a>
+  
+    <a title="facebook" target="" href="">
+      <i class="iconfont icon-facebooksquare"></i>
+    </a>
+  
+    <a title="twitter" target="" href="">
+      <i class="iconfont icon-twitter"></i>
+    </a>
+  
+    <a title="wechat" target="" href="">
+      <i class="iconfont icon-wechat"></i>
+    </a>
+  
+    <a title="weibo" target="" href="">
+      <i class="iconfont icon-weibo"></i>
+    </a>
+  
+    <a title="rss" target="_blank" href="/atom.xml">
+      <i class="iconfont icon-rss"></i>
+    </a>
+  
+</p>
+
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Sep 02, 2025
+  </h3>
+  <h1>
+    左值和右值详解
+  </h1>
+  <div class="content markdown-body">
+    <p>C++ 的左值（lvalue）和右值（rvalue）是 C++ 语言中一个非常基础但又极其重要的概念。它们是 C++ 表达式（expression）的两种基本属性，深刻地影响着代码的性能和写法，尤其是在 C++11 标准引入“移动语义”（Move Semantics）之后。</p>
+<p>简单来说，区分左值和右值的核心标准是：<strong>这个表达式所代表的数据，我们还能不能在后面的代码里再次访问到它。</strong></p>
+<ul>
+<li><p><strong>左值 (lvalue - locator value)</strong>：指那些在内存中<strong>有固定地址</strong>、<strong>可以被取地址</strong>（用 <code>&amp;</code> 运算符）并且<strong>在表达式结束后依然存在</strong>的表达式。你可以把它想象成一个有名字、有固定地址的“容器”。</p>
+</li>
+<li><p><strong>右值 (rvalue - read value)</strong>：指那些<strong>临时的</strong>、<strong>没有固定地址</strong>、在表达式结束后就会被销毁的表达式。你只能读取它的值，但不能对它取地址（通常情况下）。可以把它看作一个“即用即弃”的临时数据。</p>
+</li>
+</ul>
+<hr>
+<h3 id="从“赋值操作符”的左右看起（经典-C-98-时代）"><a href="#从“赋值操作符”的左右看起（经典-C-98-时代）" class="headerlink" title="从“赋值操作符”的左右看起（经典 C++98 时代）"></a>从“赋值操作符”的左右看起（经典 C++98 时代）</h3><p>在 C++ 的早期，最简单的区分方法是看它能否出现在赋值操作符 <code>=</code> 的左边：</p>
+<ul>
+<li><p><strong>能放在 <code>=</code> 左边的，就是左值。</strong> 因为放在左边意味着你要给它赋值，它必须有一个明确的、持久的存储位置。</p>
+</li>
+<li><p><strong>不能放在 <code>=</code> 左边的，就是右值。</strong> 因为它们是临时的，给一个即将销毁的东西赋值是毫无意义的。</p>
+</li>
+</ul>
+<p><strong>示例：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">10</span>; <span class="comment">// &#x27;a&#x27; 是左值，因为它有内存地址，我们可以反复使用它。&#x27;10&#x27; 是右值，它是一个字面量，没有固定地址。</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> b = <span class="number">20</span>; <span class="comment">// &#x27;b&#x27; 是左值。</span></span><br><span class="line"></span><br><span class="line">a = b;      <span class="comment">// 正确：&#x27;a&#x27; 和 &#x27;b&#x27; 都是左值。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 下面的都是错误的，因为等号左边不是一个合法的左值</span></span><br><span class="line"><span class="comment">// 10 = a;         // 错误！10 是一个右值（字面量）。</span></span><br><span class="line"><span class="comment">// (a + b) = 30;   // 错误！(a + b) 的计算结果是一个临时值，是右值。</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>常见的左值：</strong></p>
+<ul>
+<li><p>变量名 (<code>a</code>, <code>b</code>)</p>
+</li>
+<li><p>数组元素 (<code>arr[0]</code>)</p>
+</li>
+<li><p>返回左值引用的函数调用 (<code>get_a_reference()</code>)</p>
+</li>
+<li><p>解引用的指针 (<code>*p</code>)</p>
+</li>
+</ul>
+<p><strong>常见的右值：</strong></p>
+<ul>
+<li><p>字面量 (<code>10</code>, <code>true</code>, <code>&#39;c&#39;</code>)</p>
+</li>
+<li><p>算术表达式的结果 (<code>a + b</code>)</p>
+</li>
+<li><p>返回非引用类型的函数返回值 (<code>get_a_value()</code>)</p>
+</li>
+<li><p>Lambda 表达式</p>
+</li>
+</ul>
+<hr>
+<h3 id="C-11-的革命：右值引用的诞生与移动语义"><a href="#C-11-的革命：右值引用的诞生与移动语义" class="headerlink" title="C++11 的革命：右值引用的诞生与移动语义"></a>C++11 的革命：右值引用的诞生与<a href="%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89.md">移动语义</a></h3><p>到了 C++11 标准，情况变得更加有趣和重要。为了解决临时对象产生的深拷贝（deep copy）带来的巨大性能开销，C++11 引入了<strong>右值引用（Rvalue Reference）和移动语义（Move Semantics）</strong>。</p>
+<hr>
+<h3 id="三、现代-C-的值类别（C-11-及以后）"><a href="#三、现代-C-的值类别（C-11-及以后）" class="headerlink" title="三、现代 C++ 的值类别（C++11 及以后）"></a>三、现代 C++ 的值类别（C++11 及以后）</h3><p>为了更精确地描述表达式的属性，C++11 以后将值的类别划分得更细，分为五个类别：</p>
+<ol>
+<li><p><strong>左值 (lvalue)</strong>: 传统的左值，有固定身份和位置。</p>
+</li>
+<li><p><strong>纯右值 (prvalue - pure rvalue)</strong>: 传统的右值，比如字面量 <code>10</code>、<code>true</code>，以及函数返回的非引用临时对象。它们是“纯粹”的值，不与任何具体对象相关联。</p>
+</li>
+<li><p><strong>将亡值 (xvalue - expiring value)</strong>: 这是 C++11 新增的概念。它代表那些生命周期即将结束的对象，通常是 <code>std::move</code> 的结果或返回右值引用的函数调用。它虽然像右值一样资源可以被窃取，但它又和某个具体的对象（曾经是左值）相关联。</p>
+</li>
+</ol>
+<p>这五个类别之间有如下关系：</p>
+<ul>
+<li><p><strong>广义左值 (glvalue - generalized lvalue)</strong> &#x3D; <strong>左值</strong> + <strong>将亡值</strong>。（表示有身份的对象）</p>
+</li>
+<li><p><strong>右值 (rvalue)</strong> &#x3D; <strong>纯右值</strong> + <strong>将亡值</strong>。（表示可以被移动的对象）</p>
+</li>
+</ul>
+<p>对大多数开发者而言，你不需要每天都去记忆这五个类别的精确定义。你只需要理解核心思想：</p>
+<ul>
+<li><p><strong>左值</strong>：有名字、能取地址、持久的对象。</p>
+</li>
+<li><p><strong>右值</strong>：临时的、即将销毁的、可以被“移动”的对象。</p>
+</li>
+<li><p><strong><code>std::move</code></strong>：一个“授权”，允许编译器将一个左值当作右值来处理，以便触发移动语义。</p>
+</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>左值 (lvalue)</th>
+<th>右值 (rvalue)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>核心含义</strong></td>
+<td>持久的对象，有固定内存地址</td>
+<td>临时的值，表达式结束后即销毁</td>
+</tr>
+<tr>
+<td><strong>能否取地址 (<code>&amp;</code>)</strong></td>
+<td>可以</td>
+<td>通常不可以（将亡值是例外）</td>
+</tr>
+<tr>
+<td><strong>能否在 <code>=</code> 左边</strong></td>
+<td>可以</td>
+<td>不可以</td>
+</tr>
+<tr>
+<td><strong>绑定到引用类型</strong></td>
+<td>左值引用 (<code>T&amp;</code>)</td>
+<td>右值引用 (<code>T&amp;&amp;</code>)</td>
+</tr>
+<tr>
+<td><strong>与性能的关系</strong></td>
+<td>通常涉及拷贝（Copy）</td>
+<td>允许移动（Move），性能更高</td>
+</tr>
+<tr>
+<td><strong>典型例子</strong></td>
+<td>变量名、数组元素</td>
+<td>字面量、表达式结果、<code>std::move</code>的结果</td>
+</tr>
+</tbody></table>
+<p>理解左值和右值的区别是掌握现代 C++ 内存管理和性能优化的关键。它不仅是理论知识，更是编写高效、优雅代码的基石。</p>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2025/09/02/%E7%BB%84%E5%90%88%E5%92%8C%E8%81%9A%E5%90%88%E7%9A%84%E5%8C%BA%E5%88%AB/">OLDER&nbsp;&gt;</a>
+      
+        
+          <a id="newer" class="blog-nav" href="/2025/09/02/%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/">&lt;&nbsp;NEWER</a>
+          
+            
+</div>
+        <div class="footer">
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/sfxfs">Copyright © Xiao 2025</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/leedom92/hexo-theme-leedom">Theme by Leedom | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-box">
+        <div class="search-title">
+          <!-- <span class="search-icon-input">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </span> -->
+          
+            <input type="text" class="search-input" id="search-input" placeholder="搜索">
+          
+          <span class="search-close-icon" id="search-close-icon">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-close"></i>
+            </a>
+          </span>
+        </div>
+        <div class="search-result" id="search-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    // inputArea.onclick = function() {
+    //   getSearchFile()
+    //   this.onclick = null
+    // }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        inputArea.focus()
+        getSearchFile()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'><span></ul>";
+      // $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'><h2>" + orig_data_title + "</h2></a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<h3 class=\"search-result-abstract\">" + match_content + "...</h3>"
+                }
+                str += "<hr></li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/leedom92/hexo-theme-leedom#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>

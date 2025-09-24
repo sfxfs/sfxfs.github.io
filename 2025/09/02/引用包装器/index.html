@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="嵌入式开发,C++,ESP32,FreeRTOS,通信协议,编程技术" />
+  <meta name="author" content="Fu Xiaofeng" />
+  <meta name="description" content="专注于嵌入式开发、C++编程和前沿技术分享的个人技术博客" />
+  
+  
+  <title>
+    
+      引用包装器 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <a href="/">Xiao's Blog</a>
+</div>
+
+
+      <p class="links">
+  
+    <a title="about" target="" href="/about/">
+      <i class="iconfont icon-emoji-friendly"></i>
+    </a>
+  
+    <a title="archives" target="_blank" href="/archives/">
+      <i class="iconfont icon-bookmark"></i>
+    </a>
+  
+    <a title="github" target="_blank" href="https://github.com/sfxfs">
+      <i class="iconfont icon-github"></i>
+    </a>
+  
+    <a title="facebook" target="" href="">
+      <i class="iconfont icon-facebooksquare"></i>
+    </a>
+  
+    <a title="twitter" target="" href="">
+      <i class="iconfont icon-twitter"></i>
+    </a>
+  
+    <a title="wechat" target="" href="">
+      <i class="iconfont icon-wechat"></i>
+    </a>
+  
+    <a title="weibo" target="" href="">
+      <i class="iconfont icon-weibo"></i>
+    </a>
+  
+    <a title="rss" target="_blank" href="/atom.xml">
+      <i class="iconfont icon-rss"></i>
+    </a>
+  
+</p>
+
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Sep 02, 2025
+  </h3>
+  <h1>
+    引用包装器
+  </h1>
+  <div class="content markdown-body">
+    <p><code>std::reference_wrapper</code> 是 C++ 标准库 <code>&lt;functional&gt;</code> 头文件中的一个类模板，它的主要作用是<strong>将引用包装成一个可拷贝、可赋值的对象</strong>。</p>
+<h3 id="什么是-std-reference-wrapper？"><a href="#什么是-std-reference-wrapper？" class="headerlink" title="什么是 std::reference_wrapper？"></a>什么是 <code>std::reference_wrapper</code>？</h3><p>在 C++ 中，引用（reference）本身不能被重新赋值，也不能作为容器的元素，因为它们不符合大多数标准库容器和算法对**可拷贝（Copyable）<strong>或</strong>可赋值（Assignable）**的要求。</p>
+<p><code>std::reference_wrapper&lt;T&gt;</code> 解决了这个问题。它内部持有一个 <code>T</code> 类型的引用，但它本身是一个对象，可以像普通对象一样被拷贝和赋值。当你拷贝一个 <code>std::reference_wrapper</code> 对象时，你拷贝的是对<strong>同一个</strong>原始对象的引用，而不是拷贝原始对象本身。</p>
+<h3 id="为什么需要它？"><a href="#为什么需要它？" class="headerlink" title="为什么需要它？"></a>为什么需要它？</h3><p><code>std::reference_wrapper</code> 的主要用途是<strong>让引用能够与标准库容器和算法协同工作</strong>。</p>
+<p>许多标准库组件，比如 <code>std::vector</code>、<code>std::list</code>、<code>std::thread</code>、<code>std::sort</code> 等，要求其操作的对象是可拷贝的。如果你直接尝试将引用放入这些容器或传递给这些函数，编译器会报错。</p>
+<p>例如，下面的代码无法编译，因为 <code>std::vector</code> 不允许存储引用：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 错误示例：不能直接存储引用</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="comment">// std::vector&lt;int&amp;&gt; my_vec; // 编译错误！</span></span><br></pre></td></tr></table></figure>
+
+<p>通过使用 <code>std::reference_wrapper</code>，你可以绕过这个限制，将引用“伪装”成一个可存储在容器中的对象：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span> <span class="comment">// 必须包含此头文件</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">10</span>;</span><br><span class="line">    <span class="type">int</span> b = <span class="number">20</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// std::vector&lt;std::reference_wrapper&lt;int&gt;&gt; 允许存储对 int 对象的引用</span></span><br><span class="line">    std::vector&lt;std::reference_wrapper&lt;<span class="type">int</span>&gt;&gt; my_vec;</span><br><span class="line">    </span><br><span class="line">    my_vec.<span class="built_in">push_back</span>(std::<span class="built_in">ref</span>(a)); <span class="comment">// std::ref 是一个辅助函数，用于创建 std::reference_wrapper</span></span><br><span class="line">    my_vec.<span class="built_in">push_back</span>(std::<span class="built_in">ref</span>(b));</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 修改容器中的第一个元素，实际上是修改了原始变量 a</span></span><br><span class="line">    my_vec[<span class="number">0</span>].<span class="built_in">get</span>() = <span class="number">100</span>; <span class="comment">// 使用 .get() 来获取被包装的引用</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Original value of a: &quot;</span> &lt;&lt; a &lt;&lt; std::endl; <span class="comment">// 输出: Original value of a: 100</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Original value of b: &quot;</span> &lt;&lt; b &lt;&lt; std::endl; <span class="comment">// 输出: Original value of b: 20</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>std::ref</code> 和 <code>std::cref</code> 辅助函数：</strong></p>
+<p>为了方便使用，C++ 标准库提供了两个辅助函数：</p>
+<ul>
+<li><p><code>std::ref(T&amp; obj)</code>：创建一个 <code>std::reference_wrapper&lt;T&gt;</code> 对象。</p>
+</li>
+<li><p><code>std::cref(const T&amp; obj)</code>：创建一个 <code>std::reference_wrapper&lt;const T&gt;</code> 对象，用于常量引用。</p>
+</li>
+</ul>
+<h3 id="std-reference-wrapper-的常见用途"><a href="#std-reference-wrapper-的常见用途" class="headerlink" title="std::reference_wrapper 的常见用途"></a><code>std::reference_wrapper</code> 的常见用途</h3><ul>
+<li><p><strong>容器存储引用：</strong> 如上例所示，将引用放入 <code>std::vector</code>、<code>std::map</code> 等容器中。</p>
+</li>
+<li><p><strong>多线程传递可变对象：</strong> 当使用 <code>std::thread</code> 启动新线程时，如果你希望线程函数能够修改一个外部变量，你需要通过 <code>std::ref</code> 传递引用。直接传递变量会发生拷贝。</p>
+</li>
+<li><p><strong>泛型编程与算法：</strong> 在使用如 <code>std::bind</code> 或 <code>std::sort</code> 等算法时，如果你想让它们操作原始对象而不是拷贝，<code>std::reference_wrapper</code> 是一个重要的工具。</p>
+</li>
+</ul>
+<p><strong>例子：<code>std::sort</code> 的应用</strong></p>
+<p>假设你有一个自定义对象的向量，你想根据其中一个成员变量对它们进行排序，但你不想拷贝整个对象。你可以创建一个存储 <code>std::reference_wrapper</code> 的向量来对原始对象进行间接排序。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyObject</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="type">int</span> id;</span><br><span class="line">    std::string name;</span><br><span class="line">    <span class="built_in">MyObject</span>(<span class="type">int</span> i, <span class="type">const</span> std::string&amp; n) : <span class="built_in">id</span>(i), <span class="built_in">name</span>(n) &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;MyObject&gt; objs;</span><br><span class="line">    objs.<span class="built_in">emplace_back</span>(<span class="number">2</span>, <span class="string">&quot;B&quot;</span>);</span><br><span class="line">    objs.<span class="built_in">emplace_back</span>(<span class="number">1</span>, <span class="string">&quot;A&quot;</span>);</span><br><span class="line">    objs.<span class="built_in">emplace_back</span>(<span class="number">3</span>, <span class="string">&quot;C&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建一个包含对原始对象引用的向量</span></span><br><span class="line">    std::vector&lt;std::reference_wrapper&lt;MyObject&gt;&gt; refs;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; obj : objs) &#123;</span><br><span class="line">        refs.<span class="built_in">push_back</span>(std::<span class="built_in">ref</span>(obj));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用 sort 对引用进行排序，比较器通过 .get() 访问原始对象</span></span><br><span class="line">    std::<span class="built_in">sort</span>(refs.<span class="built_in">begin</span>(), refs.<span class="built_in">end</span>(), [](<span class="type">const</span> std::reference_wrapper&lt;MyObject&gt;&amp; a, <span class="type">const</span> std::reference_wrapper&lt;MyObject&gt;&amp; b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a.<span class="built_in">get</span>().id &lt; b.<span class="built_in">get</span>().id;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 原始向量 objs 保持不变，但 refs 向量已经排序</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Sorted references:&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span>&amp; ref : refs) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;ID: &quot;</span> &lt;&lt; ref.<span class="built_in">get</span>().id &lt;&lt; <span class="string">&quot;, Name: &quot;</span> &lt;&lt; ref.<span class="built_in">get</span>().name &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>总结：</strong></p>
+<p><code>std::reference_wrapper</code> 是一种“引用对象”，它解决了 C++ 中引用不能被拷贝、不能被赋值、不能作为容器元素的问题。它的核心价值在于<strong>让引用能够无缝地融入 C++ 标准库的容器和算法生态系统</strong>，从而在需要传递引用而非拷贝时提供了强大的支持。</p>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2025/09/02/%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/">OLDER&nbsp;&gt;</a>
+      
+        
+          <a id="newer" class="blog-nav" href="/2025/09/02/this-auto-self-%E8%AF%A6%E8%A7%A3/">&lt;&nbsp;NEWER</a>
+          
+            
+</div>
+        <div class="footer">
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/sfxfs">Copyright © Xiao 2025</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/leedom92/hexo-theme-leedom">Theme by Leedom | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-box">
+        <div class="search-title">
+          <!-- <span class="search-icon-input">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </span> -->
+          
+            <input type="text" class="search-input" id="search-input" placeholder="搜索">
+          
+          <span class="search-close-icon" id="search-close-icon">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-close"></i>
+            </a>
+          </span>
+        </div>
+        <div class="search-result" id="search-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    // inputArea.onclick = function() {
+    //   getSearchFile()
+    //   this.onclick = null
+    // }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        inputArea.focus()
+        getSearchFile()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'><span></ul>";
+      // $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'><h2>" + orig_data_title + "</h2></a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<h3 class=\"search-result-abstract\">" + match_content + "...</h3>"
+                }
+                str += "<hr></li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/leedom92/hexo-theme-leedom#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>

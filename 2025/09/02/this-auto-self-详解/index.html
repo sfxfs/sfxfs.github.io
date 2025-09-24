@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="嵌入式开发,C++,ESP32,FreeRTOS,通信协议,编程技术" />
+  <meta name="author" content="Fu Xiaofeng" />
+  <meta name="description" content="专注于嵌入式开发、C++编程和前沿技术分享的个人技术博客" />
+  
+  
+  <title>
+    
+      this auto&amp;&amp; self 详解 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <a href="/">Xiao's Blog</a>
+</div>
+
+
+      <p class="links">
+  
+    <a title="about" target="" href="/about/">
+      <i class="iconfont icon-emoji-friendly"></i>
+    </a>
+  
+    <a title="archives" target="_blank" href="/archives/">
+      <i class="iconfont icon-bookmark"></i>
+    </a>
+  
+    <a title="github" target="_blank" href="https://github.com/sfxfs">
+      <i class="iconfont icon-github"></i>
+    </a>
+  
+    <a title="facebook" target="" href="">
+      <i class="iconfont icon-facebooksquare"></i>
+    </a>
+  
+    <a title="twitter" target="" href="">
+      <i class="iconfont icon-twitter"></i>
+    </a>
+  
+    <a title="wechat" target="" href="">
+      <i class="iconfont icon-wechat"></i>
+    </a>
+  
+    <a title="weibo" target="" href="">
+      <i class="iconfont icon-weibo"></i>
+    </a>
+  
+    <a title="rss" target="_blank" href="/atom.xml">
+      <i class="iconfont icon-rss"></i>
+    </a>
+  
+</p>
+
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Sep 02, 2025
+  </h3>
+  <h1>
+    this auto&& self 详解
+  </h1>
+  <div class="content markdown-body">
+    <p>这句代码定义了一个类的下标操作符（<code>operator[]</code>），但它使用了两个 C++23 的新特性，使其变得非常通用和强大：</p>
+<ol>
+<li><p><strong>显式 <code>this</code> 参数 (<code>this auto&amp;&amp; self</code>)</strong></p>
+</li>
+<li><p><strong>推导返回类型 (<code>auto&amp;&amp;</code>)</strong></p>
+</li>
+</ol>
+<p>让我们一步步分解来理解。</p>
+<h3 id="核心功能：定义下标操作符"><a href="#核心功能：定义下标操作符" class="headerlink" title="核心功能：定义下标操作符 []"></a>核心功能：定义下标操作符 <code>[]</code></h3><p>首先，这句代码的本质是重载（overload）下标操作符 <code>[]</code>。这允许类的对象可以像数组一样使用方括号来访问成员。例如，如果你有一个名为 <code>MyArray</code> 的类，定义了这个操作符后，你就可以这样写：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MyArray arr;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">auto</span> value = arr[<span class="number">5</span>]; <span class="comment">// 这会调用 MyArray::operator[]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-this-auto-self：显式-this-对象参数"><a href="#1-this-auto-self：显式-this-对象参数" class="headerlink" title="1. this auto&amp;&amp; self：显式 this 对象参数"></a>1. <code>this auto&amp;&amp; self</code>：显式 <code>this</code> 对象参数</h3><p>这是 C++23 引入的一个重要特性，被称为 “Deducing <code>this</code>“。</p>
+<p>在<strong>传统</strong>的 C++ 中，成员函数有一个隐式的 <code>this</code> 指针，指向调用该函数的对象。你可以根据 <code>const</code> 或 <code>&amp;</code>&#x2F;<code>&amp;&amp;</code> 限定符来为不同类型的对象（<code>const</code> 对象、<a href="./%E5%B7%A6%E5%80%BC%E5%92%8C%E5%8F%B3%E5%80%BC%E8%AF%A6%E8%A7%A3.md">左值对象、右值对象</a>）重载成员函数。</p>
+<p>例如，为了同时支持 <code>arr[i]</code> 和 <code>const_arr[i]</code>，你可能需要写两个版本：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// C++23 之前</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyArray</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 版本 1: non-const 左值对象</span></span><br><span class="line">    <span class="type">int</span>&amp; <span class="keyword">operator</span>[](<span class="type">int</span> index) &amp; &#123;</span><br><span class="line">        <span class="keyword">return</span> data[index];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 版本 2: const 左值对象</span></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span>&amp; <span class="keyword">operator</span>[](<span class="type">int</span> index) <span class="type">const</span>&amp; &#123;</span><br><span class="line">        <span class="keyword">return</span> data[index];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 可能还需要为右值对象写更多版本...</span></span><br><span class="line">    <span class="comment">// int&amp;&amp; operator[](int index) &amp;&amp;;</span></span><br><span class="line">    <span class="comment">// const int&amp;&amp; operator[](int index) const&amp;&amp;;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> data[<span class="number">10</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式非常繁琐。</p>
+<p><strong><code>this auto&amp;&amp; self</code></strong> 通过将隐式的 <code>this</code> 指针变成一个显式的、可推导的函数参数，完美地解决了这个问题。</p>
+<ul>
+<li><p><strong><code>this</code></strong>: 关键字，表明这个参数是用来捕获 <code>*this</code> 对象（即调用该成员函数的对象实例）的。</p>
+</li>
+<li><p><strong><code>auto&amp;&amp;</code></strong>: 这是个“转发 (forward) 引用”或“通用引用”。它可以接收任何类型的对象（<code>const</code>、<code>non-const</code>、左值、右值），并保持其原始的类型和值类别（value category）。</p>
+</li>
+<li><p><strong><code>self</code></strong>: 这是我们给这个参数起的<em>名字</em>，就像普通的函数参数一样。</p>
+</li>
+</ul>
+<p><strong><code>self</code> 的类型会根据调用对象的状态自动推导：</strong></p>
+<table>
+<thead>
+<tr>
+<th>如果这样调用…</th>
+<th><code>self</code> 的类型会被推导为…</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MyArray arr; arr[0];</code></td>
+<td><code>MyArray&amp;</code> (左值引用)</td>
+</tr>
+<tr>
+<td><code>const MyArray arr; arr[0];</code></td>
+<td><code>const MyArray&amp;</code> (<code>const</code> 左值引用)</td>
+</tr>
+<tr>
+<td><code>MyArray{}; arr[0];</code></td>
+<td><code>MyArray&amp;&amp;</code> (右值引用)</td>
+</tr>
+<tr>
+<td><code>const MyArray{}; arr[0];</code></td>
+<td><code>const MyArray&amp;&amp;</code> (<code>const</code> 右值引用)</td>
+</tr>
+</tbody></table>
+<p>这样，你<strong>只需要写一个函数</strong>，编译器就会自动为你处理所有情况，极大地简化了代码。</p>
+<h3 id="2-auto-：推导返回类型"><a href="#2-auto-：推导返回类型" class="headerlink" title="2. auto&amp;&amp;：推导返回类型"></a>2. <code>auto&amp;&amp;</code>：推导返回类型</h3><p>这里的 <code>auto&amp;&amp;</code> 作为返回类型，同样是一个“转发引用”。它的作用是<strong>完美转发</strong>（perfectly forward）<code>self</code> 对象内部的数据成员。</p>
+<ul>
+<li><p><strong>目标</strong>: <code>operator[]</code> 的返回值类型应该与 <code>self</code> 的类型相匹配。</p>
+<ul>
+<li><p>如果 <code>self</code> 是 <code>const</code> 的，返回的也应该是 <code>const</code> 引用。</p>
+</li>
+<li><p>如果 <code>self</code> 是 <code>non-const</code> 的，返回的应该是 <code>non-const</code> 引用，这样我们才能修改它（例如 <code>arr[0] = 100;</code>）。</p>
+</li>
+<li><p>如果 <code>self</code> 是一个右值（临时对象），我们可能希望返回一个右值引用。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><code>auto&amp;&amp;</code> 配合 <code>std::forward</code> 就能轻松实现这一点。</p>
+<h3 id="完整示例与解释"><a href="#完整示例与解释" class="headerlink" title="完整示例与解释"></a>完整示例与解释</h3><p>下面是一个完整的例子，展示了这句代码在实际类中的应用：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span> <span class="comment">// for std::forward</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="type">size_t</span> N&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyArray</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    T data[N];</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// C++23 的统一下标操作符</span></span><br><span class="line">    <span class="keyword">auto</span>&amp;&amp; <span class="keyword">operator</span>[](<span class="keyword">this</span> <span class="keyword">auto</span>&amp;&amp; self, <span class="type">int</span> index) &#123;</span><br><span class="line">        <span class="comment">// self 会被推导为 MyArray&amp;, const MyArray&amp;, MyArray&amp;&amp; 等</span></span><br><span class="line">        <span class="comment">// 我们使用 std::forward 来保持 self 的值类别</span></span><br><span class="line">        <span class="comment">// 并返回其内部 data 成员的相应引用类型</span></span><br><span class="line">        <span class="keyword">return</span> std::forward&lt;<span class="keyword">decltype</span>(self)&gt;(self).data[index];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    MyArray&lt;<span class="type">int</span>, <span class="number">5</span>&gt; arr;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1. non-const 左值对象: self 推导为 MyArray&amp;</span></span><br><span class="line">    <span class="comment">// 返回类型为 int&amp;，可以修改</span></span><br><span class="line">    arr[<span class="number">0</span>] = <span class="number">10</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;arr[0] = &quot;</span> &lt;&lt; arr[<span class="number">0</span>] &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. const 左值对象: self 推导为 const MyArray&amp;</span></span><br><span class="line">    <span class="comment">// 返回类型为 const int&amp;，不能修改</span></span><br><span class="line">    <span class="type">const</span> <span class="keyword">auto</span>&amp; const_arr = arr;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;const_arr[0] = &quot;</span> &lt;&lt; const_arr[<span class="number">0</span>] &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// const_arr[0] = 20; // 这行会编译错误，符合预期</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 右值（临时）对象: self 推导为 MyArray&amp;&amp;</span></span><br><span class="line">    <span class="comment">// 返回类型为 int&amp;&amp;</span></span><br><span class="line">    <span class="keyword">auto</span> value = MyArray&lt;<span class="type">int</span>, <span class="number">5</span>&gt;&#123;&#125;[<span class="number">0</span>]; <span class="comment">// 从一个临时对象取值</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Value from temporary = &quot;</span> &lt;&lt; value &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中：</p>
+<ul>
+<li><p><code>std::forward&lt;decltype(self)&gt;(self)</code> 是关键。它确保如果 <code>self</code> 是一个左值引用（<code>MyArray&amp;</code>），那么 <code>self.data[index]</code> 也会被当作左值返回（类型为 <code>int&amp;</code>）。如果 <code>self</code> 是一个右值引用（<code>MyArray&amp;&amp;</code>），那么 <code>self.data[index]</code> 也会被当作右值返回（类型为 <code>int&amp;&amp;</code>）。</p>
+</li>
+<li><p><code>decltype(self)</code> 获取 <code>self</code> 被推导出的精确类型。</p>
+</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这句 <code>auto&amp;&amp; operator[](this auto&amp;&amp; self, int index)</code> 是 C++23 中一种极其现代、简洁且强大的方式来定义类的下标操作符。</p>
+<p><strong>它的核心意思是：</strong></p>
+<blockquote>
+<p><strong>“定义一个通用的下标操作符，它能接受任何类型（<code>const</code>、<code>non-const</code>、左值、右值）的对象实例。它会根据调用对象的类型，自动推导出最合适的返回类型（<code>T&amp;</code>, <code>const T&amp;</code>, <code>T&amp;&amp;</code>等），从而允许我们用一套代码完美地处理所有情况，无论是读取、修改还是从临时对象中取值。”</strong></p>
+</blockquote>
+<p>它通过将 <code>this</code> 显式化和利用类型推导，彻底解决了旧版本 C++ 中需要为不同对象状态编写多个重载版本的繁琐问题。</p>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2025/09/02/%E5%BC%95%E7%94%A8%E5%8C%85%E8%A3%85%E5%99%A8/">OLDER&nbsp;&gt;</a>
+      
+        
+          <a id="newer" class="blog-nav" href="/2025/09/02/%E5%A5%87%E5%BC%82%E9%80%92%E5%BD%92%E6%A8%A1%E6%9D%BF%E6%A8%A1%E5%BC%8F-CRTP/">&lt;&nbsp;NEWER</a>
+          
+            
+</div>
+        <div class="footer">
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/sfxfs">Copyright © Xiao 2025</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/leedom92/hexo-theme-leedom">Theme by Leedom | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-box">
+        <div class="search-title">
+          <!-- <span class="search-icon-input">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </span> -->
+          
+            <input type="text" class="search-input" id="search-input" placeholder="搜索">
+          
+          <span class="search-close-icon" id="search-close-icon">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-close"></i>
+            </a>
+          </span>
+        </div>
+        <div class="search-result" id="search-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    // inputArea.onclick = function() {
+    //   getSearchFile()
+    //   this.onclick = null
+    // }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        inputArea.focus()
+        getSearchFile()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'><span></ul>";
+      // $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'><h2>" + orig_data_title + "</h2></a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<h3 class=\"search-result-abstract\">" + match_content + "...</h3>"
+                }
+                str += "<hr></li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/leedom92/hexo-theme-leedom#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
