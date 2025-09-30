@@ -6,7 +6,7 @@
   <link href="https://sfxfs.github.io/atom.xml" rel="self"/>
   
   <link href="https://sfxfs.github.io/"/>
-  <updated>2025-09-24T06:28:27.877Z</updated>
+  <updated>2025-09-30T02:15:10.653Z</updated>
   <id>https://sfxfs.github.io/</id>
   
   <author>
@@ -15,6 +15,109 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux下软链接和硬链接区别</title>
+    <link href="https://sfxfs.github.io/2025/09/30/Linux%E4%B8%8B%E8%BD%AF%E9%93%BE%E6%8E%A5%E5%92%8C%E7%A1%AC%E9%93%BE%E6%8E%A5%E5%8C%BA%E5%88%AB/"/>
+    <id>https://sfxfs.github.io/2025/09/30/Linux%E4%B8%8B%E8%BD%AF%E9%93%BE%E6%8E%A5%E5%92%8C%E7%A1%AC%E9%93%BE%E6%8E%A5%E5%8C%BA%E5%88%AB/</id>
+    <published>2025-09-30T01:55:13.000Z</published>
+    <updated>2025-09-30T02:15:10.653Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="1-定义和原理"><a href="#1-定义和原理" class="headerlink" title="1. 定义和原理"></a>1. 定义和原理</h3><ul><li><strong>硬链接</strong>：是对文件的一个直接引用。多个硬链接指向同一个 inode（即文件的唯一标识），它们是等价的，每一个都像原始文件一样。</li><li><strong>软链接</strong>：是一个特殊的文件，内容是指向目标文件路径的字符串，相当于 Windows 下的快捷方式。</li></ul><h3 id="2-inode-和文件数据块"><a href="#2-inode-和文件数据块" class="headerlink" title="2. inode 和文件数据块"></a>2. inode 和文件数据块</h3><ul><li><strong>硬链接</strong>：与原文件共享 inode 号。删除任意一个硬链接，其他硬链接和数据仍然存在，只有所有硬链接都删除后，文件数据才会被释放。</li><li><strong>软链接</strong>：有自己独立的 inode，存储的是目标文件路径，不直接指向数据块。</li></ul><h3 id="3-跨文件系统"><a href="#3-跨文件系统" class="headerlink" title="3. 跨文件系统"></a>3. 跨文件系统</h3><ul><li><strong>硬链接</strong>：只能在同一个文件系统（分区）内创建，不能跨分区。</li><li><strong>软链接</strong>：可以跨文件系统或分区，只要路径能访问即可。</li></ul><h3 id="4-对目录的支持"><a href="#4-对目录的支持" class="headerlink" title="4. 对目录的支持"></a>4. 对目录的支持</h3><ul><li><strong>硬链接</strong>：普通用户不能对目录创建硬链接（防止循环和混乱），只有超级用户可以在特定情况下创建。</li><li><strong>软链接</strong>：可以对文件和目录都创建软链接。</li></ul><h3 id="5-断链问题"><a href="#5-断链问题" class="headerlink" title="5. 断链问题"></a>5. 断链问题</h3><ul><li><strong>硬链接</strong>：只要有一个硬链接在，文件数据就能访问。</li><li><strong>软链接</strong>：如果目标文件删除或移动，软链接就“失效”变成死链（Broken Link）。</li></ul><h3 id="6-显示方式"><a href="#6-显示方式" class="headerlink" title="6. 显示方式"></a>6. 显示方式</h3><ul><li>使用 <code>ls -l</code> 命令：<ul><li>硬链接：和普通文件一样显示。</li><li>软链接：显示为 <code>目标文件 -&gt; 源文件</code> 的形式，如 <code>link.txt -&gt; target.txt</code></li></ul></li></ul><h3 id="7-创建方式"><a href="#7-创建方式" class="headerlink" title="7. 创建方式"></a>7. 创建方式</h3><ul><li><strong>硬链接</strong>：<code>ln 源文件 硬链接文件</code></li><li><strong>软链接</strong>：<code>ln -s 源文件 软链接文件</code></li></ul><hr><h4 id="总结对比表"><a href="#总结对比表" class="headerlink" title="总结对比表"></a>总结对比表</h4><table><thead><tr><th>类型</th><th>是否跨分区</th><th>是否可对目录</th><th>inode关系</th><th>删除原文件影响</th><th>创建命令</th></tr></thead><tbody><tr><td>硬链接</td><td>否</td><td>否</td><td>相同</td><td>无影响</td><td>ln 源 目标</td></tr><tr><td>软链接</td><td>是</td><td>是</td><td>不同</td><td>链接失效</td><td>ln -s 源 目标</td></tr></tbody></table>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;1-定义和原理&quot;&gt;&lt;a href=&quot;#1-定义和原理&quot; class=&quot;headerlink&quot; title=&quot;1. 定义和原理&quot;&gt;&lt;/a&gt;1. 定义和原理&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;硬链接&lt;/strong&gt;：是对文件的一个直接引用。多个硬链接指向同一</summary>
+      
+    
+    
+    
+    
+    <category term="Linux" scheme="https://sfxfs.github.io/tags/Linux/"/>
+    
+    <category term="File Link" scheme="https://sfxfs.github.io/tags/File-Link/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>move和forward的区别和应用场景</title>
+    <link href="https://sfxfs.github.io/2025/09/30/move%E5%92%8Cforward%E7%9A%84%E5%8C%BA%E5%88%AB%E5%92%8C%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/"/>
+    <id>https://sfxfs.github.io/2025/09/30/move%E5%92%8Cforward%E7%9A%84%E5%8C%BA%E5%88%AB%E5%92%8C%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/</id>
+    <published>2025-09-30T01:36:46.000Z</published>
+    <updated>2025-09-30T01:54:41.998Z</updated>
+    
+    <content type="html"><![CDATA[<p>在 C++ 中，<code>std::move</code> 和 <code>std::forward</code> 都涉及到“右值引用”和“资源移动”，但应用场景不同：</p><hr><h2 id="1-std-move"><a href="#1-std-move" class="headerlink" title="1. std::move"></a>1. <code>std::move</code></h2><h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a><strong>应用场景</strong></h3><ul><li><strong>强制把对象变成右值</strong>，用于触发移动语义（如移动构造、移动赋值）。</li><li>适用于你已经不再需要原对象，可以“搬走”其资源。</li><li>常用于容器插入、函数返回、资源转移等场景。</li></ul><h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a><strong>示例</strong></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::vector&lt;std::string&gt; v;</span><br><span class="line">std::string s = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将 s 的内容“搬”到容器里，而不是拷贝</span></span><br><span class="line">v.<span class="built_in">push_back</span>(std::<span class="built_in">move</span>(s)); <span class="comment">// s 变为空</span></span><br></pre></td></tr></table></figure><hr><h2 id="2-std-forward"><a href="#2-std-forward" class="headerlink" title="2. std::forward"></a>2. <code>std::forward</code></h2><h3 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a><strong>应用场景</strong></h3><ul><li>用于<strong>完美转发</strong>（perfect forwarding），保持参数的原始类型（左值&#x2F;右值）。</li><li>通常在<strong>模板函数</strong>中，将参数原样“传递”到另一个函数。</li><li>适用于写通用包装函数、工厂函数等场景。</li></ul><h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a><strong>示例</strong></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(T&amp;&amp; arg)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 保持 arg 的左值/右值属性，完美转发到目标函数</span></span><br><span class="line">    <span class="built_in">target_func</span>(std::forward&lt;T&gt;(arg));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li>如果 <code>wrapper(s)</code>，<code>std::forward&lt;T&gt;(arg)</code> 会是左值。</li><li>如果 <code>wrapper(std::move(s))</code>，<code>std::forward&lt;T&gt;(arg)</code> 会是右值。</li></ul><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul><li><code>std::move</code>：将对象变成右值，触发移动语义。<strong>适合你已经不再需要原对象的场景。</strong></li><li><code>std::forward</code>：保持参数原始属性，用于模板中的完美转发。<strong>适合泛型代码和包装&#x2F;转发调用。</strong></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在 C++ 中，&lt;code&gt;std::move&lt;/code&gt; 和 &lt;code&gt;std::forward&lt;/code&gt; 都涉及到“右值引用”和“资源移动”，但应用场景不同：&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;1-std-move&quot;&gt;&lt;a href=&quot;#1-std-move&quot; </summary>
+      
+    
+    
+    
+    
+    <category term="C++" scheme="https://sfxfs.github.io/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>变量内存对齐</title>
+    <link href="https://sfxfs.github.io/2025/09/30/%E5%8F%98%E9%87%8F%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/"/>
+    <id>https://sfxfs.github.io/2025/09/30/%E5%8F%98%E9%87%8F%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</id>
+    <published>2025-09-30T01:36:19.000Z</published>
+    <updated>2025-09-30T01:53:55.058Z</updated>
+    
+    <content type="html"><![CDATA[<p>有如下C代码：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> b = <span class="number">2</span>;</span><br><span class="line"><span class="type">char</span> c1 = <span class="number">3</span>;</span><br><span class="line"><span class="type">char</span> c2 = <span class="number">4</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;a: %p\n&quot;</span>,&amp;a);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;b: %p\n&quot;</span>,&amp;b);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;c1:%p\n&quot;</span>,&amp;c1);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;c2:%p\n&quot;</span>,&amp;c2);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>输出类似这样的地址顺序：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">c1: 0xaaaac23d1010</span><br><span class="line">c2: 0xaaaac23d1011</span><br><span class="line">a: 0xaaaac23d1014</span><br><span class="line">b: 0xaaaac23d1018</span><br></pre></td></tr></table></figure><p>这是为什么呢？</p><h3 id="1-变量分布与对齐"><a href="#1-变量分布与对齐" class="headerlink" title="1. 变量分布与对齐"></a>1. 变量分布与对齐</h3><ul><li><code>char c1</code>、<code>char c2</code> 连续存放，占用1字节，地址递增。</li><li><code>int a</code>、<code>int b</code> 分别占4字节（假设int为4字节），并且一般要求<strong>4字节对齐</strong>。</li><li>变量在内存中的排列顺序以及对齐方式由<strong>编译器</strong>决定，但通常遵循“定义顺序+对齐优化”。</li></ul><h3 id="2-变量排列推测（假设编译器按定义顺序分配）"><a href="#2-变量排列推测（假设编译器按定义顺序分配）" class="headerlink" title="2. 变量排列推测（假设编译器按定义顺序分配）"></a>2. 变量排列推测（假设编译器按定义顺序分配）</h3><p>假设变量以定义顺序排列在全局数据区（静态区）：</p><ol><li><code>int b</code>  </li><li><code>char c1</code>  </li><li><code>char c2</code>  </li><li><code>int a</code></li></ol><p><strong>但你代码里其实没有<code>a</code>的定义</strong>，如果你有<code>int a = ...;</code>，就会和<code>b</code>一样排在前面。</p><p>输出顺序说明了变量实际排列：</p><ul><li><code>c1</code> 先于 <code>c2</code>，相差1字节（0x1010→0x1011）</li><li><code>a</code> 地址比 <code>c2</code> 高3字节（0x1011→0x1014），说明<code>a</code>被<strong>4字节对齐</strong></li><li><code>b</code> 地址比 <code>a</code>高4字节（0x1014→0x1018）</li></ul><h4 id="变量内存分布（假设起始地址为0x1010）："><a href="#变量内存分布（假设起始地址为0x1010）：" class="headerlink" title="变量内存分布（假设起始地址为0x1010）："></a>变量内存分布（假设起始地址为0x1010）：</h4><table><thead><tr><th>变量</th><th>地址</th><th>占用</th></tr></thead><tbody><tr><td>c1</td><td>0x1010</td><td>1字节</td></tr><tr><td>c2</td><td>0x1011</td><td>1字节</td></tr><tr><td>[填充]</td><td>0x1012-0x1013</td><td>2字节（对齐a）</td></tr><tr><td>a</td><td>0x1014</td><td>4字节</td></tr><tr><td>b</td><td>0x1018</td><td>4字节</td></tr></tbody></table><h3 id="3-为什么要填充（Padding）"><a href="#3-为什么要填充（Padding）" class="headerlink" title="3. 为什么要填充（Padding）"></a>3. 为什么要填充（Padding）</h3><ul><li><code>int</code> 需要4字节对齐，否则CPU访问会慢甚至出错。</li><li>因此在<code>c2</code>之后，编译器自动填充2字节，使<code>a</code>地址是4的倍数（0x1014）。</li><li>同样，<code>b</code> 紧跟在<code>a</code>之后，地址为0x1018。</li></ul><h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h3><ul><li><strong>变量按定义顺序排列</strong>（全局变量&#x2F;静态变量）。</li><li><strong>char类型紧挨着，int类型由于对齐要求，可能有填充字节。</strong></li><li>打印出的地址正好反映了这种内存布局和对齐。</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;有如下C代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight c&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;</summary>
+      
+    
+    
+    
+    
+    <category term="C++" scheme="https://sfxfs.github.io/tags/C/"/>
+    
+    <category term="C" scheme="https://sfxfs.github.io/tags/C/"/>
+    
+    <category term="Memory" scheme="https://sfxfs.github.io/tags/Memory/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux和裸机程序内存布局</title>
+    <link href="https://sfxfs.github.io/2025/09/30/Linux%E5%92%8C%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/"/>
+    <id>https://sfxfs.github.io/2025/09/30/Linux%E5%92%8C%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/</id>
+    <published>2025-09-30T01:18:08.000Z</published>
+    <updated>2025-09-30T01:48:34.877Z</updated>
+    
+    <content type="html"><![CDATA[<p>所谓的“进程的内存”通常指的是进程的<strong>虚拟地址空间（Virtual Address Space）</strong>，而不是直接的物理内存。</p><p>每个进程都有一个独立、私有的虚拟地址空间，操作系统（如 Linux）会将这个空间划分为几个主要区域，并进行特定的排列。</p><hr><h1 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h1><h2 id="进程虚拟地址空间的主要分区"><a href="#进程虚拟地址空间的主要分区" class="headerlink" title="进程虚拟地址空间的主要分区"></a>进程虚拟地址空间的主要分区</h2><p>一个进程的虚拟地址空间通常从低地址向高地址延伸，主要被划分为以下几个区域：</p><h3 id="1-代码段（Text-Segment-Code-Segment）"><a href="#1-代码段（Text-Segment-Code-Segment）" class="headerlink" title="1. 代码段（Text Segment &#x2F; Code Segment）"></a>1. <strong>代码段（Text Segment &#x2F; Code Segment）</strong></h3><ul><li><strong>内容</strong>：存放进程执行的<strong>机器指令</strong>（程序代码）。</li><li><strong>特性</strong>：通常是<strong>只读</strong>的，以防止程序意外地修改自身的指令。它可以被多个进程共享（例如多个进程运行同一个程序）。</li><li><strong>排布</strong>：位于虚拟地址空间的<strong>低端</strong>。</li></ul><h3 id="2-数据段（Data-Segment）"><a href="#2-数据段（Data-Segment）" class="headerlink" title="2. 数据段（Data Segment）"></a>2. <strong>数据段（Data Segment）</strong></h3><ul><li><strong>内容</strong>：存放<strong>已初始化</strong>的<strong>全局变量</strong>和<strong>静态变量</strong>。</li><li><strong>特性</strong>：<strong>可读写</strong>。这些变量的值在程序启动时就已经确定。</li></ul><h3 id="3-BSS-段（Block-Started-by-Symbol-Segment）"><a href="#3-BSS-段（Block-Started-by-Symbol-Segment）" class="headerlink" title="3. BSS 段（Block Started by Symbol Segment）"></a>3. <strong>BSS 段（Block Started by Symbol Segment）</strong></h3><ul><li><strong>内容</strong>：存放<strong>未初始化</strong>的<strong>全局变量</strong>和<strong>静态变量</strong>。</li><li><strong>特性</strong>：<strong>可读写</strong>。在程序加载时，操作系统会将其初始化为 <code>0</code> 或空指针。</li><li><strong>名称由来</strong>：BSS 段在程序文件中不占实际空间，只是记录了所需内存的大小，这有助于减小可执行文件体积。</li></ul><h3 id="4-堆（Heap）"><a href="#4-堆（Heap）" class="headerlink" title="4. 堆（Heap）"></a>4. <strong>堆（Heap）</strong></h3><ul><li><strong>内容</strong>：用于程序运行时的<strong>动态内存分配</strong>（如使用 <code>malloc</code>、<code>calloc</code>、<code>realloc</code> 等函数申请的内存）。</li><li><strong>特性</strong>：<strong>可读写</strong>。</li><li><strong>增长方向</strong>：从低地址向高地址<strong>增长</strong>。</li><li><strong>管理</strong>：由C标准库中的分配器（如 <code>malloc</code> 的实现）管理，它通过 <strong><code>brk</code> &#x2F; <code>sbrk</code></strong> 或 <strong><code>mmap</code></strong> 系统调用向操作系统申请更大的虚拟地址空间。</li></ul><h3 id="5-内存映射区（Memory-Mapping-Segment）"><a href="#5-内存映射区（Memory-Mapping-Segment）" class="headerlink" title="5. 内存映射区（Memory Mapping Segment）"></a>5. <strong>内存映射区（Memory Mapping Segment）</strong></h3><ul><li><strong>内容</strong>：<ul><li>动态链接库（如 <code>.so</code> 文件）映射到此区域（<strong>数据并没有真正从磁盘加载到物理内存</strong>，它只是建立了一个<strong>虚拟地址</strong>到<strong>文件页</strong>的映射关系）。</li><li>使用 <strong><code>mmap</code></strong> 系统调用进行文件 I&#x2F;O 映射的区域。</li><li>分配<strong>大块</strong>动态内存（<code>malloc</code> 超过一定阈值时会使用 <code>mmap</code>）。</li></ul></li><li><strong>特性</strong>：灵活，可读写。</li><li><strong>增长方向</strong>：通常从高地址向低地址<strong>增长</strong>。</li></ul><h3 id="6-栈（Stack）"><a href="#6-栈（Stack）" class="headerlink" title="6. 栈（Stack）"></a>6. <strong>栈（Stack）</strong></h3><ul><li><strong>内容</strong>：用于存放<strong>局部变量</strong>、函数<strong>参数</strong>、<strong>返回值</strong>以及函数调用所需的<strong>上下文</strong>信息（如返回地址）。</li><li><strong>特性</strong>：<strong>可读写</strong>。</li><li><strong>增长方向</strong>：从高地址向低地址<strong>增长</strong>。</li><li><strong>管理</strong>：由编译器和操作系统自动管理，遵循 <strong>后进先出（LIFO）</strong> 的原则。</li></ul><hr><h2 id="内存排布和地址增长方向"><a href="#内存排布和地址增长方向" class="headerlink" title="内存排布和地址增长方向"></a>内存排布和地址增长方向</h2><p>进程的虚拟地址空间通常呈现出以下<strong>排布规律</strong>（以典型的 Linux 系统为例）：</p><ol><li><strong>内核空间（Kernel Space）</strong>：位于虚拟地址的<strong>最高端</strong>。这部分内存为操作系统内核保留，用户程序通常无法直接访问。</li><li><strong>栈（Stack）</strong>：紧挨着内核空间下方，从<strong>高地址向低地址</strong>增长。</li><li><strong>内存映射区</strong>：位于栈和堆之间，通常也从<strong>高地址向低地址</strong>增长。</li><li><strong>堆（Heap）</strong>：位于代码段和数据段上方，从<strong>低地址向高地址</strong>增长。<ul><li><strong>堆和栈的“相遇”</strong>：在设计上，堆和栈的增长方向是相反的，它们之间通常会预留一大块未映射的区域。如果堆或栈增长过快，导致它们各自的边界相遇或越过对方，就会导致内存溢出或段错误。</li></ul></li><li><strong>BSS 段 &#x2F; 数据段 &#x2F; 代码段</strong>：这三个静态区域位于虚拟地址的<strong>低端</strong>。</li></ol><h3 id="简化示意图（从低地址到高地址）"><a href="#简化示意图（从低地址到高地址）" class="headerlink" title="简化示意图（从低地址到高地址）"></a>简化示意图（从低地址到高地址）</h3><table><thead><tr><th>虚拟地址（高）</th><th>区域名称</th><th>增长方向</th><th>内存用途</th></tr></thead><tbody><tr><td>↑</td><td><strong>内核空间</strong></td><td>-</td><td>操作系统内核使用</td></tr><tr><td></td><td><strong>栈 (Stack)</strong></td><td>↓ (向低地址增长)</td><td>局部变量、函数调用</td></tr><tr><td></td><td><strong>未分配区域</strong></td><td>-</td><td>-</td></tr><tr><td></td><td><strong>内存映射区 (mmap)</strong></td><td>↓ (向低地址增长)</td><td>动态库、大块内存</td></tr><tr><td></td><td><strong>未分配区域</strong></td><td>-</td><td>-</td></tr><tr><td></td><td><strong>堆 (Heap)</strong></td><td>↑ (向高地址增长)</td><td>动态分配内存 (<code>malloc</code>)</td></tr><tr><td></td><td><strong>BSS 段</strong></td><td>-</td><td>未初始化全局&#x2F;静态变量</td></tr><tr><td></td><td><strong>数据段</strong></td><td>-</td><td>已初始化全局&#x2F;静态变量</td></tr><tr><td>↓</td><td><strong>代码段 (Text)</strong></td><td>-</td><td>程序的机器指令</td></tr><tr><td>虚拟地址（低）</td><td></td><td></td><td></td></tr></tbody></table><h3 id="按需分页（Demand-Paging）"><a href="#按需分页（Demand-Paging）" class="headerlink" title="按需分页（Demand Paging）"></a>按需分页（Demand Paging）</h3><p>真正的效率提升在于**按需分页（Demand Paging）**机制：</p><ul><li><strong>初始状态</strong>：动态库被映射后，其对应的虚拟地址并没有实际的物理内存页与之对应。</li><li><strong>首次访问</strong>：当程序第一次试图执行动态库中的某个函数或访问某个数据时，CPU 会根据虚拟地址去查找<strong>页表</strong>。此时发现该页还没有加载到物理内存，会触发一个<strong>缺页中断（Page Fault）</strong>。</li><li><strong>加载页面</strong>：操作系统内核捕获到缺页中断后，会从磁盘上的动态库文件找到对应的**页面（Page）**内容，将其加载到一个**物理内存帧**中，并更新页表，建立虚拟地址与物理地址的映射。</li><li><strong>继续执行</strong>：程序随后在中断处恢复执行，就能够顺利访问该内存了。</li></ul><h1 id="裸机（STM32）"><a href="#裸机（STM32）" class="headerlink" title="裸机（STM32）"></a>裸机（STM32）</h1><p>这是一个从通用计算机（如 Linux 进程）转移到<strong>嵌入式系统</strong>（如 <strong>STM32 微控制器</strong>）的精彩问题！</p><p>STM32 微控制器<strong>没有</strong>操作系统提供的复杂的<strong>虚拟内存</strong>机制，也没有进程的概念。它的内存布局直接对应于其<strong>物理内存</strong>和<strong>片上外设</strong>的地址空间。</p><p>STM32 的内存布局是<strong>固定</strong>的，由其内部架构（基于 ARM Cortex-M 内核）决定，主要分为以下几个关键区域：</p><hr><h2 id="STM32-微控制器的内存布局"><a href="#STM32-微控制器的内存布局" class="headerlink" title="STM32 微控制器的内存布局"></a>STM32 微控制器的内存布局</h2><p><img src="/2025/09/30/Linux%E5%92%8C%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/1.png"></p><p>STM32 采用**哈佛结构（Harvard Architecture）*<em>或*<em>改进的冯·诺依曼结构</em></em>，其中代码和数据可以分开访问。其内存空间被划分为几个主要区域，每个区域都有一个固定的地址范围。</p><h3 id="1-闪存（Flash-Memory）-CODE-区"><a href="#1-闪存（Flash-Memory）-CODE-区" class="headerlink" title="1. 闪存（Flash Memory） - CODE 区"></a>1. 闪存（Flash Memory） - CODE 区</h3><table><thead><tr><th>特性</th><th>描述</th></tr></thead><tbody><tr><td><strong>地址范围</strong></td><td>通常从 <code>0x0800 0000</code> 开始</td></tr><tr><td><strong>内容</strong></td><td>存放程序<strong>代码</strong>（指令）和<strong>常量数据</strong>（如字符串字面量、<code>const</code> 变量）。</td></tr><tr><td><strong>特性</strong></td><td><strong>非易失性</strong>（掉电不丢失）。这是程序烧录的主要目标区域。程序启动时，CPU 从这里取指令执行。</td></tr></tbody></table><h3 id="2-SRAM（Static-RAM）-DATA-HEAP-STACK-区"><a href="#2-SRAM（Static-RAM）-DATA-HEAP-STACK-区" class="headerlink" title="2. SRAM（Static RAM） - DATA&#x2F;HEAP&#x2F;STACK 区"></a>2. SRAM（Static RAM） - DATA&#x2F;HEAP&#x2F;STACK 区</h3><p>SRAM 是 STM32 的主要<strong>工作内存</strong>，<strong>易失性</strong>（掉电丢失）。它被细分为我们熟悉的数据、堆和栈等区域。</p><table><thead><tr><th>特性</th><th>描述</th></tr></thead><tbody><tr><td><strong>地址范围</strong></td><td>通常从 <code>0x2000 0000</code> 开始</td></tr><tr><td><strong>内容</strong></td><td></td></tr><tr><td><strong>数据段</strong>(<code>.data</code>)</td><td>存放<strong>已初始化</strong>的<strong>全局&#x2F;静态变量</strong>。程序启动时，这些数据会从 Flash <strong>复制</strong>到 SRAM。</td></tr><tr><td><strong>BSS 段</strong>(<code>.bss</code>)</td><td>存放<strong>未初始化</strong>的<strong>全局&#x2F;静态变量</strong>。程序启动时，这部分空间会被<strong>清零</strong>。</td></tr><tr><td><strong>堆（Heap）</strong></td><td>用于程序运行时的<strong>动态内存分配</strong>（如 <code>malloc</code>）。<strong>从低地址向高地址增长</strong>。</td></tr><tr><td><strong>栈（Stack）</strong></td><td>用于存放<strong>局部变量</strong>、函数<strong>参数</strong>和<strong>返回地址</strong>。<strong>从高地址向低地址增长</strong>。</td></tr><tr><td><strong>注意</strong></td><td>在 STM32 上，堆和栈的空间是<strong>静态预留</strong>的，在链接脚本（Linker Script）中定义它们的大小和位置。堆和栈的增长如果互相侵占，会导致程序崩溃。</td></tr></tbody></table><h3 id="3-外设（Peripherals）-外设寄存器区"><a href="#3-外设（Peripherals）-外设寄存器区" class="headerlink" title="3. 外设（Peripherals） - 外设寄存器区"></a>3. 外设（Peripherals） - 外设寄存器区</h3><table><thead><tr><th>特性</th><th>描述</th></tr></thead><tbody><tr><td><strong>地址范围</strong></td><td>通常从 <code>0x4000 0000</code> 或 <code>0x5000 0000</code> 开始</td></tr><tr><td><strong>内容</strong></td><td>存放所有片上<strong>外设的控制寄存器</strong>（如 GPIO、定时器、ADC 等）。</td></tr><tr><td><strong>特性</strong></td><td>程序员通过<strong>读写特定地址的内存</strong>来控制硬件。例如，向某个地址写入 <code>1</code> 就可以点亮一个 LED 灯。这就是所谓的<strong>内存映射 I&#x2F;O (MMIO)</strong>。</td></tr></tbody></table><h3 id="4-启动区域（Boot-Memory）"><a href="#4-启动区域（Boot-Memory）" class="headerlink" title="4. 启动区域（Boot Memory）"></a>4. 启动区域（Boot Memory）</h3><table><thead><tr><th>特性</th><th>描述</th></tr></thead><tbody><tr><td><strong>地址范围</strong></td><td>从 <code>0x0000 0000</code> 开始</td></tr><tr><td><strong>内容</strong></td><td>包含了<strong>重映射</strong>的地址。STM32 在启动时，会将这个低地址区域映射到 Flash、系统存储器（System Memory，用于 Bootloader）或 SRAM 中的某一个。</td></tr><tr><td><strong>特性</strong></td><td>决定了微控制器<strong>启动后执行的第一条指令</strong>来自哪里。</td></tr></tbody></table><hr><h2 id="与-PC-内存模型的关键区别"><a href="#与-PC-内存模型的关键区别" class="headerlink" title="与 PC 内存模型的关键区别"></a>与 PC 内存模型的关键区别</h2><table><thead><tr><th>特性</th><th>PC &#x2F; Linux 进程</th><th>STM32 &#x2F; 嵌入式系统</th></tr></thead><tbody><tr><td><strong>内存类型</strong></td><td><strong>虚拟内存</strong>（抽象层）</td><td><strong>物理内存</strong>（直接访问）</td></tr><tr><td><strong>内存管理</strong></td><td>复杂，由 OS 动态管理和分配，使用<strong>分页</strong>和<strong>页表</strong>。</td><td>简单，<strong>静态分配</strong>，内存由<strong>链接器脚本</strong>预先分配。</td></tr><tr><td><strong>动态库&#x2F;mmap</strong></td><td>大量使用 <code>mmap</code> 加载动态库，实现<strong>按需分页</strong>。</td><td>不存在动态库概念，所有代码和数据在编译时就确定了位置。</td></tr><tr><td><strong>堆&#x2F;栈</strong></td><td>堆和栈之间的空间巨大且包含 <code>mmap</code> 区。</td><td>堆和栈的空间是<strong>有限且相邻</strong>的，由链接脚本严格划分。</td></tr><tr><td><strong>外设</strong></td><td>通过系统调用或驱动访问硬件。</td><td>通过<strong>内存映射 I&#x2F;O</strong>（直接读写内存地址）来控制硬件。</td></tr></tbody></table>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;所谓的“进程的内存”通常指的是进程的&lt;strong&gt;虚拟地址空间（Virtual Address Space）&lt;/strong&gt;，而不是直接的物理内存。&lt;/p&gt;
+&lt;p&gt;每个进程都有一个独立、私有的虚拟地址空间，操作系统（如 Linux）会将这个空间划分为几个主要区域，并进行</summary>
+      
+    
+    
+    
+    
+    <category term="Linux" scheme="https://sfxfs.github.io/tags/Linux/"/>
+    
+    <category term="STM32" scheme="https://sfxfs.github.io/tags/STM32/"/>
+    
+    <category term="MCU" scheme="https://sfxfs.github.io/tags/MCU/"/>
+    
+  </entry>
   
   <entry>
     <title>C11 新特性和示例代码</title>
@@ -516,103 +619,6 @@
     <category term="RockPi" scheme="https://sfxfs.github.io/tags/RockPi/"/>
     
     <category term="Armbian" scheme="https://sfxfs.github.io/tags/Armbian/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ESP32-IDF WIFI的使用(1) 初步入门</title>
-    <link href="https://sfxfs.github.io/2023/01/03/ESP32-IDF-WIFI%E7%9A%84%E4%BD%BF%E7%94%A8-1-%E5%88%9D%E6%AD%A5%E5%85%A5%E9%97%A8/"/>
-    <id>https://sfxfs.github.io/2023/01/03/ESP32-IDF-WIFI%E7%9A%84%E4%BD%BF%E7%94%A8-1-%E5%88%9D%E6%AD%A5%E5%85%A5%E9%97%A8/</id>
-    <published>2023-01-03T05:41:36.000Z</published>
-    <updated>2025-09-24T06:28:27.884Z</updated>
-    
-    <content type="html"><![CDATA[<p>WiFi相关文档参阅 <a href="https://docs.espressif.com/projects/esp-idf/zh_CN/release-v5.0/esp32/api-guides/wifi.html">乐鑫IDF编程文档</a></p><p>具体启动流程如下:</p><p><img src="https://docs.espressif.com/projects/esp-idf/zh_CN/release-v5.0/esp32/_images/seqdiag-3539a23193af2f08aeb412fd527f18a5a1b2fd43.png"></p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">ESP_ERROR_CHECK(esp_netif_init());  <span class="comment">//创建一个 LwIP 核心任务，并初始化 LwIP 相关工作</span></span><br><span class="line">    ESP_ERROR_CHECK(esp_event_loop_create_default());   <span class="comment">//创建一个系统事件任务，并初始化应用程序事件的回调函数。在此情况下，该回调函数唯一的动作就是将事件中继到应用程序任务中</span></span><br><span class="line">    ESP_ERROR_CHECK(esp_netif_create_default_wifi_sta());   <span class="comment">//创建有 TCP/IP 堆栈的默认网络接口实例绑定 station</span></span><br><span class="line">    <span class="type">wifi_init_config_t</span> wifi_init_config = WIFI_INIT_CONFIG_DEFAULT;</span><br><span class="line">    ESP_ERROR_CHECK(esp_wifi_init(&amp;wifi_init_config));</span><br><span class="line"></span><br><span class="line">    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));</span><br><span class="line"></span><br><span class="line">    ESP_ERROR_CHECK(esp_wifi_start());</span><br><span class="line"></span><br><span class="line">    <span class="type">wifi_country_t</span> country_config = &#123;</span><br><span class="line">        .cc = <span class="string">&quot;CN&quot;</span>,</span><br><span class="line">        .schan = <span class="number">1</span>,</span><br><span class="line">        .nchan = <span class="number">13</span>,</span><br><span class="line">        .policy = WIFI_COUNTRY_POLICY_AUTO,</span><br><span class="line">    &#125;;</span><br><span class="line">    ESP_ERROR_CHECK(esp_wifi_set_country(&amp;country_config));</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;WiFi相关文档参阅 &lt;a href=&quot;https://docs.espressif.com/projects/esp-idf/zh_CN/release-v5.0/esp32/api-guides/wifi.html&quot;&gt;乐鑫IDF编程文档&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;具体启动流</summary>
-      
-    
-    
-    
-    
-    <category term="ESP32" scheme="https://sfxfs.github.io/tags/ESP32/"/>
-    
-    <category term="IDF" scheme="https://sfxfs.github.io/tags/IDF/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ESP32-IDF 自定义分区表的编写</title>
-    <link href="https://sfxfs.github.io/2023/01/02/ESP32-IDF-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%86%E5%8C%BA%E8%A1%A8%E7%9A%84%E7%BC%96%E5%86%99/"/>
-    <id>https://sfxfs.github.io/2023/01/02/ESP32-IDF-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%86%E5%8C%BA%E8%A1%A8%E7%9A%84%E7%BC%96%E5%86%99/</id>
-    <published>2023-01-02T12:31:05.000Z</published>
-    <updated>2025-09-24T06:28:27.885Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Name,   Type, SubType, Offset,  Size, Flags</span><br><span class="line">nvs,      data, nvs,     ,        0x6000,</span><br><span class="line">phy_init, data, phy,     ,        0x1000,</span><br><span class="line">factory,  app,  factory, ,        1M,</span><br></pre></td></tr></table></figure><p>第一个为NVS分区,大小为24K多一点;第三个就是存放程序的地方,大小为1MByte</p><p>我们在底下多加一行NVS</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">my_nvs, data, nvs, , 1M,</span><br></pre></td></tr></table></figure><p>将这些内容保存为 <code>partitions.csv</code> 后放在项目根目录并修改 Manuconfig 里面使用的分区表.</p><h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><p>这里以NVS为例:</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">nvs_handle_t</span> testhandle;</span><br><span class="line">nvs_open_from_partition(<span class="string">&quot;my_nvs&quot;</span>, <span class="string">&quot;test_name&quot;</span>, NVS_READWRITE, &amp;testhandle);</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;内容&quot;&gt;&lt;a href=&quot;#内容&quot; class=&quot;headerlink&quot; title=&quot;内容&quot;&gt;&lt;/a&gt;内容&lt;/h1&gt;&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;s</summary>
-      
-    
-    
-    
-    
-    <category term="ESP32" scheme="https://sfxfs.github.io/tags/ESP32/"/>
-    
-    <category term="IDF" scheme="https://sfxfs.github.io/tags/IDF/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ESP32-IDF 非易失性存储 NVS (二) 相关工具</title>
-    <link href="https://sfxfs.github.io/2023/01/02/ESP32-IDF-%E9%9D%9E%E6%98%93%E5%A4%B1%E6%80%A7%E5%AD%98%E5%82%A8-NVS-%E4%BA%8C-%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7/"/>
-    <id>https://sfxfs.github.io/2023/01/02/ESP32-IDF-%E9%9D%9E%E6%98%93%E5%A4%B1%E6%80%A7%E5%AD%98%E5%82%A8-NVS-%E4%BA%8C-%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7/</id>
-    <published>2023-01-02T12:11:16.000Z</published>
-    <updated>2025-09-24T06:28:27.885Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="NVS迭代器"><a href="#NVS迭代器" class="headerlink" title="NVS迭代器"></a>NVS迭代器</h1><p>相当于终端的 <code>ls</code> 命令,可以遍历 NVS 所有的 key 和 value</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Example of listing all the key-value pairs of any type under specified partition and namespace</span></span><br><span class="line"> <span class="type">nvs_iterator_t</span> it = <span class="literal">NULL</span>;</span><br><span class="line"> <span class="type">esp_err_t</span> res = nvs_entry_find(&lt;nvs_partition_name&gt;, &lt;namespace&gt;, NVS_TYPE_ANY, &amp;it);</span><br><span class="line"> <span class="keyword">while</span>(res == ESP_OK) &#123;</span><br><span class="line">     <span class="type">nvs_entry_info_t</span> info;</span><br><span class="line">     nvs_entry_info(it, &amp;info); <span class="comment">// Can omit error check if parameters are guaranteed to be non-NULL</span></span><br><span class="line">     <span class="built_in">printf</span>(<span class="string">&quot;key &#x27;%s&#x27;, type &#x27;%d&#x27; \n&quot;</span>, info.key, info.type);</span><br><span class="line">     res = nvs_entry_next(&amp;it);</span><br><span class="line"> &#125;</span><br><span class="line"> nvs_release_iterator(it);</span><br></pre></td></tr></table></figure><h1 id="获取NVS当前状态"><a href="#获取NVS当前状态" class="headerlink" title="获取NVS当前状态"></a>获取NVS当前状态</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Example of nvs_get_stats() to get the number of used entries and free entries:</span></span><br><span class="line"><span class="type">nvs_stats_t</span> nvs_stats;</span><br><span class="line">nvs_get_stats(<span class="literal">NULL</span>, &amp;nvs_stats);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Count: UsedEntries = (%d), FreeEntries = (%d), AllEntries = (%d)\n&quot;</span>,</span><br><span class="line">       nvs_stats.used_entries, nvs_stats.free_entries, nvs_stats.total_entries);</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;NVS迭代器&quot;&gt;&lt;a href=&quot;#NVS迭代器&quot; class=&quot;headerlink&quot; title=&quot;NVS迭代器&quot;&gt;&lt;/a&gt;NVS迭代器&lt;/h1&gt;&lt;p&gt;相当于终端的 &lt;code&gt;ls&lt;/code&gt; 命令,可以遍历 NVS 所有的 key 和 value&lt;/p&gt;</summary>
-      
-    
-    
-    
-    
-    <category term="ESP32" scheme="https://sfxfs.github.io/tags/ESP32/"/>
-    
-    <category term="IDF" scheme="https://sfxfs.github.io/tags/IDF/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ESP32-IDF 非易失性存储 NVS (一) 入门</title>
-    <link href="https://sfxfs.github.io/2022/12/19/ESP32-IDF-%E9%9D%9E%E6%98%93%E5%A4%B1%E6%80%A7%E5%AD%98%E5%82%A8-NVS-%E4%B8%80-%E5%85%A5%E9%97%A8/"/>
-    <id>https://sfxfs.github.io/2022/12/19/ESP32-IDF-%E9%9D%9E%E6%98%93%E5%A4%B1%E6%80%A7%E5%AD%98%E5%82%A8-NVS-%E4%B8%80-%E5%85%A5%E9%97%A8/</id>
-    <published>2022-12-19T05:02:40.000Z</published>
-    <updated>2025-09-24T06:28:27.885Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>NVS格式就是一种flash的文件管理方式，因为他自身这种键值对的数据结构有较大的空间开销，所有不适合很长的数据（重复的key会浪费空间），而适合一对一对的这种短的数据（优势应该是方便查管理）.在ESP32上NVS是基础，比如WIFI都会使用到NVS来存储配置文件。<a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32/api-reference/storage/nvs_flash.html">乐鑫官方文档</a></p><h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><table><thead><tr><th>函数名</th><th>描述</th></tr></thead><tbody><tr><td>nvs_flash_init()</td><td>挂载NVS</td></tr><tr><td>nvs_flash_deinit()</td><td>卸载NVS</td></tr><tr><td>nvs_open(const char* namespace_name, nvs_open_mode_t open_mode, nvs_handle_t *out_handle)</td><td>打开对应namespace的NVS</td></tr><tr><td>nvs_close(nvs_handle_t *out_handle)</td><td>关闭NVS</td></tr><tr><td>nvs_get_xx(nvs_handle_t c_handle, const char* key, xx* out_value)</td><td>获取数据(如果对应key数据不存在则out_value不会被修改)</td></tr><tr><td>nvs_set_xx(nvs_handle_t handle, const char* key, xx value))</td><td>写入数据</td></tr><tr><td>nvs_commit(nvs_handle_t handle)</td><td>写入所有数据(加在所有set后面)</td></tr></tbody></table><h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos/FreeRTOS.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos/task.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;nvs.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;nvs_flash.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;esp_log.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NS_TEST <span class="string">&quot;ns-test&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KEY_TEST <span class="string">&quot;key-test&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">nvs_handle_t</span> testhandle;</span><br><span class="line"></span><br><span class="line"><span class="type">uint16_t</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">app_main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    vTaskDelay(<span class="number">1000</span>/portTICK_PERIOD_MS);</span><br><span class="line">    nvs_flash_init();</span><br><span class="line">    nvs_open(NS_TEST, NVS_READWRITE, &amp;testhandle);</span><br><span class="line">    nvs_get_u16(testhandle, KEY_TEST, &amp;count);</span><br><span class="line">    ESP_LOGI(<span class="string">&quot;NVS&quot;</span>, <span class="string">&quot;the count %d&quot;</span>, count);</span><br><span class="line">    nvs_set_u16(testhandle, KEY_TEST, ++count);</span><br><span class="line">    nvs_commit(testhandle);</span><br><span class="line">    nvs_close(testhandle);</span><br><span class="line">    nvs_flash_deinit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h1 id="BLOB"><a href="#BLOB" class="headerlink" title="BLOB"></a>BLOB</h1><p>可以存放任何类型的数据,如结构体和字符串</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">esp_err_t</span> <span class="title function_">nvs_set_blob</span><span class="params">(<span class="type">nvs_handle_t</span> c_handle,</span></span><br><span class="line"><span class="params">                       <span class="type">const</span> <span class="type">char</span>* key,</span></span><br><span class="line"><span class="params">                       <span class="type">const</span> <span class="type">void</span>* value,</span></span><br><span class="line"><span class="params">                       <span class="type">size_t</span> length)</span></span><br></pre></td></tr></table></figure><p>用法:</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">char</span> ssid[<span class="number">50</span>];</span><br><span class="line">    <span class="type">char</span> password[<span class="number">50</span>];</span><br><span class="line">&#125; <span class="type">ap_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">ap_t</span> ap1;</span><br><span class="line"><span class="type">ap_t</span> aps[max_ap];</span><br><span class="line"></span><br><span class="line">nvs_set_blob(my_handle, <span class="string">&quot;test&quot;</span>, ap1, <span class="keyword">sizeof</span>(ap1));</span><br><span class="line">nvs_set_blob(my_handle, <span class="string">&quot;tests&quot;</span>, aps, <span class="keyword">sizeof</span>(aps));</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介绍&lt;/h1&gt;&lt;p&gt;NVS格式就是一种flash的文件管理方式，因为他自身这种键值对的数据结构有较大的空间开销，所有不适合很长的数据（重复的key会浪费空间），</summary>
-      
-    
-    
-    
-    
-    <category term="ESP32" scheme="https://sfxfs.github.io/tags/ESP32/"/>
-    
-    <category term="IDF" scheme="https://sfxfs.github.io/tags/IDF/"/>
     
   </entry>
   

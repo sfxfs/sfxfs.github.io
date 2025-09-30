@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="嵌入式开发,C++,ESP32,FreeRTOS,通信协议,编程技术" />
+  <meta name="author" content="Fu Xiaofeng" />
+  <meta name="description" content="专注于嵌入式开发、C++编程和前沿技术分享的个人技术博客" />
+  
+  
+  <title>
+    
+      Linux和裸机程序内存布局 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <a href="/">Xiao's Blog</a>
+</div>
+
+
+      <p class="links">
+  
+    <a title="about" target="" href="/about/">
+      <i class="iconfont icon-emoji-friendly"></i>
+    </a>
+  
+    <a title="archives" target="_blank" href="/archives/">
+      <i class="iconfont icon-bookmark"></i>
+    </a>
+  
+    <a title="github" target="_blank" href="https://github.com/sfxfs">
+      <i class="iconfont icon-github"></i>
+    </a>
+  
+    <a title="facebook" target="" href="">
+      <i class="iconfont icon-facebooksquare"></i>
+    </a>
+  
+    <a title="twitter" target="" href="">
+      <i class="iconfont icon-twitter"></i>
+    </a>
+  
+    <a title="wechat" target="" href="">
+      <i class="iconfont icon-wechat"></i>
+    </a>
+  
+    <a title="weibo" target="" href="">
+      <i class="iconfont icon-weibo"></i>
+    </a>
+  
+    <a title="rss" target="_blank" href="/atom.xml">
+      <i class="iconfont icon-rss"></i>
+    </a>
+  
+</p>
+
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Sep 30, 2025
+  </h3>
+  <h1>
+    Linux和裸机程序内存布局
+  </h1>
+  <div class="content markdown-body">
+    <p>所谓的“进程的内存”通常指的是进程的<strong>虚拟地址空间（Virtual Address Space）</strong>，而不是直接的物理内存。</p>
+<p>每个进程都有一个独立、私有的虚拟地址空间，操作系统（如 Linux）会将这个空间划分为几个主要区域，并进行特定的排列。</p>
+<hr>
+<h1 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h1><h2 id="进程虚拟地址空间的主要分区"><a href="#进程虚拟地址空间的主要分区" class="headerlink" title="进程虚拟地址空间的主要分区"></a>进程虚拟地址空间的主要分区</h2><p>一个进程的虚拟地址空间通常从低地址向高地址延伸，主要被划分为以下几个区域：</p>
+<h3 id="1-代码段（Text-Segment-Code-Segment）"><a href="#1-代码段（Text-Segment-Code-Segment）" class="headerlink" title="1. 代码段（Text Segment &#x2F; Code Segment）"></a>1. <strong>代码段（Text Segment &#x2F; Code Segment）</strong></h3><ul>
+<li><strong>内容</strong>：存放进程执行的<strong>机器指令</strong>（程序代码）。</li>
+<li><strong>特性</strong>：通常是<strong>只读</strong>的，以防止程序意外地修改自身的指令。它可以被多个进程共享（例如多个进程运行同一个程序）。</li>
+<li><strong>排布</strong>：位于虚拟地址空间的<strong>低端</strong>。</li>
+</ul>
+<h3 id="2-数据段（Data-Segment）"><a href="#2-数据段（Data-Segment）" class="headerlink" title="2. 数据段（Data Segment）"></a>2. <strong>数据段（Data Segment）</strong></h3><ul>
+<li><strong>内容</strong>：存放<strong>已初始化</strong>的<strong>全局变量</strong>和<strong>静态变量</strong>。</li>
+<li><strong>特性</strong>：<strong>可读写</strong>。这些变量的值在程序启动时就已经确定。</li>
+</ul>
+<h3 id="3-BSS-段（Block-Started-by-Symbol-Segment）"><a href="#3-BSS-段（Block-Started-by-Symbol-Segment）" class="headerlink" title="3. BSS 段（Block Started by Symbol Segment）"></a>3. <strong>BSS 段（Block Started by Symbol Segment）</strong></h3><ul>
+<li><strong>内容</strong>：存放<strong>未初始化</strong>的<strong>全局变量</strong>和<strong>静态变量</strong>。</li>
+<li><strong>特性</strong>：<strong>可读写</strong>。在程序加载时，操作系统会将其初始化为 <code>0</code> 或空指针。</li>
+<li><strong>名称由来</strong>：BSS 段在程序文件中不占实际空间，只是记录了所需内存的大小，这有助于减小可执行文件体积。</li>
+</ul>
+<h3 id="4-堆（Heap）"><a href="#4-堆（Heap）" class="headerlink" title="4. 堆（Heap）"></a>4. <strong>堆（Heap）</strong></h3><ul>
+<li><strong>内容</strong>：用于程序运行时的<strong>动态内存分配</strong>（如使用 <code>malloc</code>、<code>calloc</code>、<code>realloc</code> 等函数申请的内存）。</li>
+<li><strong>特性</strong>：<strong>可读写</strong>。</li>
+<li><strong>增长方向</strong>：从低地址向高地址<strong>增长</strong>。</li>
+<li><strong>管理</strong>：由C标准库中的分配器（如 <code>malloc</code> 的实现）管理，它通过 <strong><code>brk</code> &#x2F; <code>sbrk</code></strong> 或 <strong><code>mmap</code></strong> 系统调用向操作系统申请更大的虚拟地址空间。</li>
+</ul>
+<h3 id="5-内存映射区（Memory-Mapping-Segment）"><a href="#5-内存映射区（Memory-Mapping-Segment）" class="headerlink" title="5. 内存映射区（Memory Mapping Segment）"></a>5. <strong>内存映射区（Memory Mapping Segment）</strong></h3><ul>
+<li><strong>内容</strong>：<ul>
+<li>动态链接库（如 <code>.so</code> 文件）映射到此区域（<strong>数据并没有真正从磁盘加载到物理内存</strong>，它只是建立了一个<strong>虚拟地址</strong>到<strong>文件页</strong>的映射关系）。</li>
+<li>使用 <strong><code>mmap</code></strong> 系统调用进行文件 I&#x2F;O 映射的区域。</li>
+<li>分配<strong>大块</strong>动态内存（<code>malloc</code> 超过一定阈值时会使用 <code>mmap</code>）。</li>
+</ul>
+</li>
+<li><strong>特性</strong>：灵活，可读写。</li>
+<li><strong>增长方向</strong>：通常从高地址向低地址<strong>增长</strong>。</li>
+</ul>
+<h3 id="6-栈（Stack）"><a href="#6-栈（Stack）" class="headerlink" title="6. 栈（Stack）"></a>6. <strong>栈（Stack）</strong></h3><ul>
+<li><strong>内容</strong>：用于存放<strong>局部变量</strong>、函数<strong>参数</strong>、<strong>返回值</strong>以及函数调用所需的<strong>上下文</strong>信息（如返回地址）。</li>
+<li><strong>特性</strong>：<strong>可读写</strong>。</li>
+<li><strong>增长方向</strong>：从高地址向低地址<strong>增长</strong>。</li>
+<li><strong>管理</strong>：由编译器和操作系统自动管理，遵循 <strong>后进先出（LIFO）</strong> 的原则。</li>
+</ul>
+<hr>
+<h2 id="内存排布和地址增长方向"><a href="#内存排布和地址增长方向" class="headerlink" title="内存排布和地址增长方向"></a>内存排布和地址增长方向</h2><p>进程的虚拟地址空间通常呈现出以下<strong>排布规律</strong>（以典型的 Linux 系统为例）：</p>
+<ol>
+<li><strong>内核空间（Kernel Space）</strong>：位于虚拟地址的<strong>最高端</strong>。这部分内存为操作系统内核保留，用户程序通常无法直接访问。</li>
+<li><strong>栈（Stack）</strong>：紧挨着内核空间下方，从<strong>高地址向低地址</strong>增长。</li>
+<li><strong>内存映射区</strong>：位于栈和堆之间，通常也从<strong>高地址向低地址</strong>增长。</li>
+<li><strong>堆（Heap）</strong>：位于代码段和数据段上方，从<strong>低地址向高地址</strong>增长。<ul>
+<li><strong>堆和栈的“相遇”</strong>：在设计上，堆和栈的增长方向是相反的，它们之间通常会预留一大块未映射的区域。如果堆或栈增长过快，导致它们各自的边界相遇或越过对方，就会导致内存溢出或段错误。</li>
+</ul>
+</li>
+<li><strong>BSS 段 &#x2F; 数据段 &#x2F; 代码段</strong>：这三个静态区域位于虚拟地址的<strong>低端</strong>。</li>
+</ol>
+<h3 id="简化示意图（从低地址到高地址）"><a href="#简化示意图（从低地址到高地址）" class="headerlink" title="简化示意图（从低地址到高地址）"></a>简化示意图（从低地址到高地址）</h3><table>
+<thead>
+<tr>
+<th>虚拟地址（高）</th>
+<th>区域名称</th>
+<th>增长方向</th>
+<th>内存用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>↑</td>
+<td><strong>内核空间</strong></td>
+<td>-</td>
+<td>操作系统内核使用</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>栈 (Stack)</strong></td>
+<td>↓ (向低地址增长)</td>
+<td>局部变量、函数调用</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>未分配区域</strong></td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>内存映射区 (mmap)</strong></td>
+<td>↓ (向低地址增长)</td>
+<td>动态库、大块内存</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>未分配区域</strong></td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>堆 (Heap)</strong></td>
+<td>↑ (向高地址增长)</td>
+<td>动态分配内存 (<code>malloc</code>)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>BSS 段</strong></td>
+<td>-</td>
+<td>未初始化全局&#x2F;静态变量</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>数据段</strong></td>
+<td>-</td>
+<td>已初始化全局&#x2F;静态变量</td>
+</tr>
+<tr>
+<td>↓</td>
+<td><strong>代码段 (Text)</strong></td>
+<td>-</td>
+<td>程序的机器指令</td>
+</tr>
+<tr>
+<td>虚拟地址（低）</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="按需分页（Demand-Paging）"><a href="#按需分页（Demand-Paging）" class="headerlink" title="按需分页（Demand Paging）"></a>按需分页（Demand Paging）</h3><p>真正的效率提升在于**按需分页（Demand Paging）**机制：</p>
+<ul>
+<li><strong>初始状态</strong>：动态库被映射后，其对应的虚拟地址并没有实际的物理内存页与之对应。</li>
+<li><strong>首次访问</strong>：当程序第一次试图执行动态库中的某个函数或访问某个数据时，CPU 会根据虚拟地址去查找<strong>页表</strong>。此时发现该页还没有加载到物理内存，会触发一个<strong>缺页中断（Page Fault）</strong>。</li>
+<li><strong>加载页面</strong>：操作系统内核捕获到缺页中断后，会从磁盘上的动态库文件找到对应的**页面（Page）**内容，将其加载到一个**物理内存帧**中，并更新页表，建立虚拟地址与物理地址的映射。</li>
+<li><strong>继续执行</strong>：程序随后在中断处恢复执行，就能够顺利访问该内存了。</li>
+</ul>
+<h1 id="裸机（STM32）"><a href="#裸机（STM32）" class="headerlink" title="裸机（STM32）"></a>裸机（STM32）</h1><p>这是一个从通用计算机（如 Linux 进程）转移到<strong>嵌入式系统</strong>（如 <strong>STM32 微控制器</strong>）的精彩问题！</p>
+<p>STM32 微控制器<strong>没有</strong>操作系统提供的复杂的<strong>虚拟内存</strong>机制，也没有进程的概念。它的内存布局直接对应于其<strong>物理内存</strong>和<strong>片上外设</strong>的地址空间。</p>
+<p>STM32 的内存布局是<strong>固定</strong>的，由其内部架构（基于 ARM Cortex-M 内核）决定，主要分为以下几个关键区域：</p>
+<hr>
+<h2 id="STM32-微控制器的内存布局"><a href="#STM32-微控制器的内存布局" class="headerlink" title="STM32 微控制器的内存布局"></a>STM32 微控制器的内存布局</h2><p><img src="/2025/09/30/Linux%E5%92%8C%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/1.png"></p>
+<p>STM32 采用**哈佛结构（Harvard Architecture）*<em>或*<em>改进的冯·诺依曼结构</em></em>，其中代码和数据可以分开访问。其内存空间被划分为几个主要区域，每个区域都有一个固定的地址范围。</p>
+<h3 id="1-闪存（Flash-Memory）-CODE-区"><a href="#1-闪存（Flash-Memory）-CODE-区" class="headerlink" title="1. 闪存（Flash Memory） - CODE 区"></a>1. 闪存（Flash Memory） - CODE 区</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>地址范围</strong></td>
+<td>通常从 <code>0x0800 0000</code> 开始</td>
+</tr>
+<tr>
+<td><strong>内容</strong></td>
+<td>存放程序<strong>代码</strong>（指令）和<strong>常量数据</strong>（如字符串字面量、<code>const</code> 变量）。</td>
+</tr>
+<tr>
+<td><strong>特性</strong></td>
+<td><strong>非易失性</strong>（掉电不丢失）。这是程序烧录的主要目标区域。程序启动时，CPU 从这里取指令执行。</td>
+</tr>
+</tbody></table>
+<h3 id="2-SRAM（Static-RAM）-DATA-HEAP-STACK-区"><a href="#2-SRAM（Static-RAM）-DATA-HEAP-STACK-区" class="headerlink" title="2. SRAM（Static RAM） - DATA&#x2F;HEAP&#x2F;STACK 区"></a>2. SRAM（Static RAM） - DATA&#x2F;HEAP&#x2F;STACK 区</h3><p>SRAM 是 STM32 的主要<strong>工作内存</strong>，<strong>易失性</strong>（掉电丢失）。它被细分为我们熟悉的数据、堆和栈等区域。</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>地址范围</strong></td>
+<td>通常从 <code>0x2000 0000</code> 开始</td>
+</tr>
+<tr>
+<td><strong>内容</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>数据段</strong>(<code>.data</code>)</td>
+<td>存放<strong>已初始化</strong>的<strong>全局&#x2F;静态变量</strong>。程序启动时，这些数据会从 Flash <strong>复制</strong>到 SRAM。</td>
+</tr>
+<tr>
+<td><strong>BSS 段</strong>(<code>.bss</code>)</td>
+<td>存放<strong>未初始化</strong>的<strong>全局&#x2F;静态变量</strong>。程序启动时，这部分空间会被<strong>清零</strong>。</td>
+</tr>
+<tr>
+<td><strong>堆（Heap）</strong></td>
+<td>用于程序运行时的<strong>动态内存分配</strong>（如 <code>malloc</code>）。<strong>从低地址向高地址增长</strong>。</td>
+</tr>
+<tr>
+<td><strong>栈（Stack）</strong></td>
+<td>用于存放<strong>局部变量</strong>、函数<strong>参数</strong>和<strong>返回地址</strong>。<strong>从高地址向低地址增长</strong>。</td>
+</tr>
+<tr>
+<td><strong>注意</strong></td>
+<td>在 STM32 上，堆和栈的空间是<strong>静态预留</strong>的，在链接脚本（Linker Script）中定义它们的大小和位置。堆和栈的增长如果互相侵占，会导致程序崩溃。</td>
+</tr>
+</tbody></table>
+<h3 id="3-外设（Peripherals）-外设寄存器区"><a href="#3-外设（Peripherals）-外设寄存器区" class="headerlink" title="3. 外设（Peripherals） - 外设寄存器区"></a>3. 外设（Peripherals） - 外设寄存器区</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>地址范围</strong></td>
+<td>通常从 <code>0x4000 0000</code> 或 <code>0x5000 0000</code> 开始</td>
+</tr>
+<tr>
+<td><strong>内容</strong></td>
+<td>存放所有片上<strong>外设的控制寄存器</strong>（如 GPIO、定时器、ADC 等）。</td>
+</tr>
+<tr>
+<td><strong>特性</strong></td>
+<td>程序员通过<strong>读写特定地址的内存</strong>来控制硬件。例如，向某个地址写入 <code>1</code> 就可以点亮一个 LED 灯。这就是所谓的<strong>内存映射 I&#x2F;O (MMIO)</strong>。</td>
+</tr>
+</tbody></table>
+<h3 id="4-启动区域（Boot-Memory）"><a href="#4-启动区域（Boot-Memory）" class="headerlink" title="4. 启动区域（Boot Memory）"></a>4. 启动区域（Boot Memory）</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>地址范围</strong></td>
+<td>从 <code>0x0000 0000</code> 开始</td>
+</tr>
+<tr>
+<td><strong>内容</strong></td>
+<td>包含了<strong>重映射</strong>的地址。STM32 在启动时，会将这个低地址区域映射到 Flash、系统存储器（System Memory，用于 Bootloader）或 SRAM 中的某一个。</td>
+</tr>
+<tr>
+<td><strong>特性</strong></td>
+<td>决定了微控制器<strong>启动后执行的第一条指令</strong>来自哪里。</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="与-PC-内存模型的关键区别"><a href="#与-PC-内存模型的关键区别" class="headerlink" title="与 PC 内存模型的关键区别"></a>与 PC 内存模型的关键区别</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>PC &#x2F; Linux 进程</th>
+<th>STM32 &#x2F; 嵌入式系统</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>内存类型</strong></td>
+<td><strong>虚拟内存</strong>（抽象层）</td>
+<td><strong>物理内存</strong>（直接访问）</td>
+</tr>
+<tr>
+<td><strong>内存管理</strong></td>
+<td>复杂，由 OS 动态管理和分配，使用<strong>分页</strong>和<strong>页表</strong>。</td>
+<td>简单，<strong>静态分配</strong>，内存由<strong>链接器脚本</strong>预先分配。</td>
+</tr>
+<tr>
+<td><strong>动态库&#x2F;mmap</strong></td>
+<td>大量使用 <code>mmap</code> 加载动态库，实现<strong>按需分页</strong>。</td>
+<td>不存在动态库概念，所有代码和数据在编译时就确定了位置。</td>
+</tr>
+<tr>
+<td><strong>堆&#x2F;栈</strong></td>
+<td>堆和栈之间的空间巨大且包含 <code>mmap</code> 区。</td>
+<td>堆和栈的空间是<strong>有限且相邻</strong>的，由链接脚本严格划分。</td>
+</tr>
+<tr>
+<td><strong>外设</strong></td>
+<td>通过系统调用或驱动访问硬件。</td>
+<td>通过<strong>内存映射 I&#x2F;O</strong>（直接读写内存地址）来控制硬件。</td>
+</tr>
+</tbody></table>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2025/09/19/C11-%E6%96%B0%E7%89%B9%E6%80%A7%E5%92%8C%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81/">OLDER&nbsp;&gt;</a>
+      
+        
+          <a id="newer" class="blog-nav" href="/2025/09/30/%E5%8F%98%E9%87%8F%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">&lt;&nbsp;NEWER</a>
+          
+            
+</div>
+        <div class="footer">
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/sfxfs">Copyright © Xiao 2025</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/leedom92/hexo-theme-leedom">Theme by Leedom | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-box">
+        <div class="search-title">
+          <!-- <span class="search-icon-input">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </span> -->
+          
+            <input type="text" class="search-input" id="search-input" placeholder="搜索">
+          
+          <span class="search-close-icon" id="search-close-icon">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-close"></i>
+            </a>
+          </span>
+        </div>
+        <div class="search-result" id="search-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    // inputArea.onclick = function() {
+    //   getSearchFile()
+    //   this.onclick = null
+    // }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        inputArea.focus()
+        getSearchFile()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'><span></ul>";
+      // $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'><h2>" + orig_data_title + "</h2></a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<h3 class=\"search-result-abstract\">" + match_content + "...</h3>"
+                }
+                str += "<hr></li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/leedom92/hexo-theme-leedom#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
