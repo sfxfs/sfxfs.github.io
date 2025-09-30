@@ -4,6 +4,48 @@
   
     
     <entry>
+      <title>FreeRTOS中的SysTick、SVCall和Pend</title>
+      <link href="/2025/09/30/FreeRTOS%E4%B8%AD%E7%9A%84SysTick%E3%80%81SVCall%E5%92%8CPend/"/>
+      <url>/2025/09/30/FreeRTOS%E4%B8%AD%E7%9A%84SysTick%E3%80%81SVCall%E5%92%8CPend/</url>
+      
+        <content type="html"><![CDATA[<h2 id="1-SysTick"><a href="#1-SysTick" class="headerlink" title="1. SysTick"></a>1. <strong>SysTick</strong></h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><ul><li><strong>SysTick</strong> 是 Cortex-M 系列专用的系统定时器中断。</li><li>通常用于周期性地触发中断，时间间隔可以配置（比如每 1ms）。</li><li>优先级可以设置，通常高于 PendSV。</li></ul><h3 id="在-FreeRTOS-中的用途"><a href="#在-FreeRTOS-中的用途" class="headerlink" title="在 FreeRTOS 中的用途"></a>在 FreeRTOS 中的用途</h3><ul><li><strong>系统时钟节拍</strong>（tick）：FreeRTOS 用 SysTick 定时器生成操作系统节拍（OS Tick），即系统“心跳”。</li><li>每当 SysTick 中断发生时，FreeRTOS 增加 tick 计数器，判断是否有延时任务需要唤醒，并决定是否触发任务切换（如果有高优先级任务就绪）。</li><li>主要代码位于 <code>SysTick_Handler</code>，会调用 <code>xPortSysTickHandler()</code>。</li></ul><hr><h2 id="2-SVCall"><a href="#2-SVCall" class="headerlink" title="2. SVCall"></a>2. <strong>SVCall</strong></h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><ul><li><strong>SVCall</strong>（Supervisor Call）是一个软件触发的中断，通过执行 SVC 指令产生。</li><li>用于实现特权级操作或系统服务调用。</li></ul><h3 id="在-FreeRTOS-中的用途-1"><a href="#在-FreeRTOS-中的用途-1" class="headerlink" title="在 FreeRTOS 中的用途"></a>在 FreeRTOS 中的用途</h3><ul><li>在一些 FreeRTOS 端口（如 ARM Cortex-M）中，SVCall 可用于进入或退出特权级模式，实现系统调用。</li><li>比如在支持 MPU（内存保护单元）的端口，FreeRTOS 通过 SVC 切换任务的权限级别。</li><li>在多数基础 FreeRTOS 用法中，SVCall用得较少，主要用于安全相关或特权切换场景。</li></ul><hr><h2 id="3-PendSV"><a href="#3-PendSV" class="headerlink" title="3. PendSV"></a>3. <strong>PendSV</strong></h2><h3 id="简介-2"><a href="#简介-2" class="headerlink" title="简介"></a>简介</h3><ul><li><strong>PendSV</strong>（Pendable Service Call）是 Cortex-M 专有的、优先级最低的系统异常。</li><li>只能由软件设置挂起，不能被硬件自动触发。</li><li>设计目标：专用于 RTOS 的任务上下文切换。</li></ul><h3 id="在-FreeRTOS-中的用途-2"><a href="#在-FreeRTOS-中的用途-2" class="headerlink" title="在 FreeRTOS 中的用途"></a>在 FreeRTOS 中的用途</h3><ul><li><strong>任务切换（上下文切换）</strong>：FreeRTOS 通过挂起 PendSV （<code>SCB-&gt;ICSR |= SCB_ICSR_PENDSVSET_Msk</code>），实现任务切换的时机控制。</li><li>当需要切换任务时（如更高优先级任务就绪或主动 yield），调度器会触发 PendSV。</li><li>PendSV 的异常处理函数会保存当前任务现场、恢复下一个任务现场，完成任务切换。</li></ul><hr><h2 id="总结表格"><a href="#总结表格" class="headerlink" title="总结表格"></a>总结表格</h2><table><thead><tr><th>异常名</th><th>Cortex-M作用</th><th>FreeRTOS用途</th></tr></thead><tbody><tr><td>SysTick</td><td>周期性定时器中断</td><td>产生OS节拍，管理任务延时和唤醒</td></tr><tr><td>SVCall</td><td>软件触发的系统调用</td><td>进入&#x2F;退出特权级，安全相关</td></tr><tr><td>PendSV</td><td>挂起服务异常</td><td>任务上下文切换（切换任务）</td></tr></tbody></table>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> FreeRTOS </tag>
+            
+            <tag> ARM </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>array、vector、list的区别</title>
+      <link href="/2025/09/30/array%E3%80%81vector%E3%80%81list%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
+      <url>/2025/09/30/array%E3%80%81vector%E3%80%81list%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+      
+        <content type="html"><![CDATA[<p>下面分别介绍 C++ 标准库中的 <code>array</code>、<code>vector</code> 和 <code>list</code> 的区别：</p><hr><h3 id="array-和-vector-的区别"><a href="#array-和-vector-的区别" class="headerlink" title="array 和 vector 的区别"></a>array 和 vector 的区别</h3><table><thead><tr><th>特性</th><th>array</th><th>vector</th></tr></thead><tbody><tr><td>定义方式</td><td><code>std::array&lt;T, N&gt;</code></td><td><code>std::vector&lt;T&gt;</code></td></tr><tr><td>容量</td><td>固定（编译期已知大小）</td><td>动态（运行时可扩展）</td></tr><tr><td>内存分配</td><td>通常在栈上（连续空间）</td><td>在堆上（连续空间）</td></tr><tr><td>能否改变大小</td><td>不能，创建后大小固定</td><td>可以自动扩容&#x2F;缩小</td></tr><tr><td>性能</td><td>访问速度快（和原生数组一样）</td><td>访问速度快，扩容时有开销</td></tr><tr><td>用途</td><td>大小已知且固定的数组</td><td>需频繁增删元素的场景</td></tr></tbody></table><p><strong>举例：</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::array&lt;<span class="type">int</span>, 5&gt; arr = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;     <span class="comment">// 固定长度，不能扩容</span></span><br><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;       <span class="comment">// 可动态扩容</span></span><br><span class="line">vec.<span class="built_in">push_back</span>(<span class="number">6</span>);                             <span class="comment">// 支持动态插入</span></span><br></pre></td></tr></table></figure><hr><h3 id="vector-和-list-的区别"><a href="#vector-和-list-的区别" class="headerlink" title="vector 和 list 的区别"></a>vector 和 list 的区别</h3><table><thead><tr><th>特性</th><th>vector</th><th>list</th></tr></thead><tbody><tr><td>底层结构</td><td>数组（连续内存）</td><td>双向链表</td></tr><tr><td>访问速度</td><td>随机访问快（O(1)）</td><td>随机访问慢（O(n)）</td></tr><tr><td>插入&#x2F;删除</td><td>尾部效率高，头部&#x2F;中间慢</td><td>任意位置插入&#x2F;删除都快</td></tr><tr><td>内存使用</td><td>连续空间，内存碎片少</td><td>每个节点有额外指针开销</td></tr><tr><td>适用场景</td><td>需频繁随机访问或尾部操作</td><td>需频繁在中间插入&#x2F;删除</td></tr></tbody></table><p><strong>举例：</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line">v.<span class="built_in">insert</span>(v.<span class="built_in">begin</span>() + <span class="number">1</span>, <span class="number">4</span>);   <span class="comment">// 插入效率低，可能整体搬移</span></span><br><span class="line">std::list&lt;<span class="type">int</span>&gt; l = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line"><span class="keyword">auto</span> it = l.<span class="built_in">begin</span>();</span><br><span class="line">std::<span class="built_in">advance</span>(it, <span class="number">1</span>);          <span class="comment">// 移动到第二个元素</span></span><br><span class="line">l.<span class="built_in">insert</span>(it, <span class="number">4</span>);              <span class="comment">// 插入效率高</span></span><br></pre></td></tr></table></figure><hr><p><strong>总结：</strong></p><ul><li><code>array</code>：大小固定，适合已知长度的数组。</li><li><code>vector</code>：动态数组，适合大量随机访问和尾部插入。</li><li><code>list</code>：链表，适合频繁在任意位置插入&#x2F;删除，但不适合随机访问。</li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> C++ </tag>
+            
+            <tag> STL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Linux下软链接和硬链接区别</title>
       <link href="/2025/09/30/Linux%E4%B8%8B%E8%BD%AF%E9%93%BE%E6%8E%A5%E5%92%8C%E7%A1%AC%E9%93%BE%E6%8E%A5%E5%8C%BA%E5%88%AB/"/>
       <url>/2025/09/30/Linux%E4%B8%8B%E8%BD%AF%E9%93%BE%E6%8E%A5%E5%92%8C%E7%A1%AC%E9%93%BE%E6%8E%A5%E5%8C%BA%E5%88%AB/</url>

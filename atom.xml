@@ -6,7 +6,7 @@
   <link href="https://sfxfs.github.io/atom.xml" rel="self"/>
   
   <link href="https://sfxfs.github.io/"/>
-  <updated>2025-09-30T02:15:10.653Z</updated>
+  <updated>2025-09-30T09:34:02.006Z</updated>
   <id>https://sfxfs.github.io/</id>
   
   <author>
@@ -15,6 +15,56 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>FreeRTOS中的SysTick、SVCall和Pend</title>
+    <link href="https://sfxfs.github.io/2025/09/30/FreeRTOS%E4%B8%AD%E7%9A%84SysTick%E3%80%81SVCall%E5%92%8CPend/"/>
+    <id>https://sfxfs.github.io/2025/09/30/FreeRTOS%E4%B8%AD%E7%9A%84SysTick%E3%80%81SVCall%E5%92%8CPend/</id>
+    <published>2025-09-30T07:53:23.000Z</published>
+    <updated>2025-09-30T09:34:02.006Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="1-SysTick"><a href="#1-SysTick" class="headerlink" title="1. SysTick"></a>1. <strong>SysTick</strong></h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><ul><li><strong>SysTick</strong> 是 Cortex-M 系列专用的系统定时器中断。</li><li>通常用于周期性地触发中断，时间间隔可以配置（比如每 1ms）。</li><li>优先级可以设置，通常高于 PendSV。</li></ul><h3 id="在-FreeRTOS-中的用途"><a href="#在-FreeRTOS-中的用途" class="headerlink" title="在 FreeRTOS 中的用途"></a>在 FreeRTOS 中的用途</h3><ul><li><strong>系统时钟节拍</strong>（tick）：FreeRTOS 用 SysTick 定时器生成操作系统节拍（OS Tick），即系统“心跳”。</li><li>每当 SysTick 中断发生时，FreeRTOS 增加 tick 计数器，判断是否有延时任务需要唤醒，并决定是否触发任务切换（如果有高优先级任务就绪）。</li><li>主要代码位于 <code>SysTick_Handler</code>，会调用 <code>xPortSysTickHandler()</code>。</li></ul><hr><h2 id="2-SVCall"><a href="#2-SVCall" class="headerlink" title="2. SVCall"></a>2. <strong>SVCall</strong></h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><ul><li><strong>SVCall</strong>（Supervisor Call）是一个软件触发的中断，通过执行 SVC 指令产生。</li><li>用于实现特权级操作或系统服务调用。</li></ul><h3 id="在-FreeRTOS-中的用途-1"><a href="#在-FreeRTOS-中的用途-1" class="headerlink" title="在 FreeRTOS 中的用途"></a>在 FreeRTOS 中的用途</h3><ul><li>在一些 FreeRTOS 端口（如 ARM Cortex-M）中，SVCall 可用于进入或退出特权级模式，实现系统调用。</li><li>比如在支持 MPU（内存保护单元）的端口，FreeRTOS 通过 SVC 切换任务的权限级别。</li><li>在多数基础 FreeRTOS 用法中，SVCall用得较少，主要用于安全相关或特权切换场景。</li></ul><hr><h2 id="3-PendSV"><a href="#3-PendSV" class="headerlink" title="3. PendSV"></a>3. <strong>PendSV</strong></h2><h3 id="简介-2"><a href="#简介-2" class="headerlink" title="简介"></a>简介</h3><ul><li><strong>PendSV</strong>（Pendable Service Call）是 Cortex-M 专有的、优先级最低的系统异常。</li><li>只能由软件设置挂起，不能被硬件自动触发。</li><li>设计目标：专用于 RTOS 的任务上下文切换。</li></ul><h3 id="在-FreeRTOS-中的用途-2"><a href="#在-FreeRTOS-中的用途-2" class="headerlink" title="在 FreeRTOS 中的用途"></a>在 FreeRTOS 中的用途</h3><ul><li><strong>任务切换（上下文切换）</strong>：FreeRTOS 通过挂起 PendSV （<code>SCB-&gt;ICSR |= SCB_ICSR_PENDSVSET_Msk</code>），实现任务切换的时机控制。</li><li>当需要切换任务时（如更高优先级任务就绪或主动 yield），调度器会触发 PendSV。</li><li>PendSV 的异常处理函数会保存当前任务现场、恢复下一个任务现场，完成任务切换。</li></ul><hr><h2 id="总结表格"><a href="#总结表格" class="headerlink" title="总结表格"></a>总结表格</h2><table><thead><tr><th>异常名</th><th>Cortex-M作用</th><th>FreeRTOS用途</th></tr></thead><tbody><tr><td>SysTick</td><td>周期性定时器中断</td><td>产生OS节拍，管理任务延时和唤醒</td></tr><tr><td>SVCall</td><td>软件触发的系统调用</td><td>进入&#x2F;退出特权级，安全相关</td></tr><tr><td>PendSV</td><td>挂起服务异常</td><td>任务上下文切换（切换任务）</td></tr></tbody></table>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;1-SysTick&quot;&gt;&lt;a href=&quot;#1-SysTick&quot; class=&quot;headerlink&quot; title=&quot;1. SysTick&quot;&gt;&lt;/a&gt;1. &lt;strong&gt;SysTick&lt;/strong&gt;&lt;/h2&gt;&lt;h3 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; </summary>
+      
+    
+    
+    
+    
+    <category term="FreeRTOS" scheme="https://sfxfs.github.io/tags/FreeRTOS/"/>
+    
+    <category term="ARM" scheme="https://sfxfs.github.io/tags/ARM/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>array、vector、list的区别</title>
+    <link href="https://sfxfs.github.io/2025/09/30/array%E3%80%81vector%E3%80%81list%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
+    <id>https://sfxfs.github.io/2025/09/30/array%E3%80%81vector%E3%80%81list%E7%9A%84%E5%8C%BA%E5%88%AB/</id>
+    <published>2025-09-30T07:30:33.000Z</published>
+    <updated>2025-09-30T07:31:34.740Z</updated>
+    
+    <content type="html"><![CDATA[<p>下面分别介绍 C++ 标准库中的 <code>array</code>、<code>vector</code> 和 <code>list</code> 的区别：</p><hr><h3 id="array-和-vector-的区别"><a href="#array-和-vector-的区别" class="headerlink" title="array 和 vector 的区别"></a>array 和 vector 的区别</h3><table><thead><tr><th>特性</th><th>array</th><th>vector</th></tr></thead><tbody><tr><td>定义方式</td><td><code>std::array&lt;T, N&gt;</code></td><td><code>std::vector&lt;T&gt;</code></td></tr><tr><td>容量</td><td>固定（编译期已知大小）</td><td>动态（运行时可扩展）</td></tr><tr><td>内存分配</td><td>通常在栈上（连续空间）</td><td>在堆上（连续空间）</td></tr><tr><td>能否改变大小</td><td>不能，创建后大小固定</td><td>可以自动扩容&#x2F;缩小</td></tr><tr><td>性能</td><td>访问速度快（和原生数组一样）</td><td>访问速度快，扩容时有开销</td></tr><tr><td>用途</td><td>大小已知且固定的数组</td><td>需频繁增删元素的场景</td></tr></tbody></table><p><strong>举例：</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::array&lt;<span class="type">int</span>, 5&gt; arr = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;     <span class="comment">// 固定长度，不能扩容</span></span><br><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;       <span class="comment">// 可动态扩容</span></span><br><span class="line">vec.<span class="built_in">push_back</span>(<span class="number">6</span>);                             <span class="comment">// 支持动态插入</span></span><br></pre></td></tr></table></figure><hr><h3 id="vector-和-list-的区别"><a href="#vector-和-list-的区别" class="headerlink" title="vector 和 list 的区别"></a>vector 和 list 的区别</h3><table><thead><tr><th>特性</th><th>vector</th><th>list</th></tr></thead><tbody><tr><td>底层结构</td><td>数组（连续内存）</td><td>双向链表</td></tr><tr><td>访问速度</td><td>随机访问快（O(1)）</td><td>随机访问慢（O(n)）</td></tr><tr><td>插入&#x2F;删除</td><td>尾部效率高，头部&#x2F;中间慢</td><td>任意位置插入&#x2F;删除都快</td></tr><tr><td>内存使用</td><td>连续空间，内存碎片少</td><td>每个节点有额外指针开销</td></tr><tr><td>适用场景</td><td>需频繁随机访问或尾部操作</td><td>需频繁在中间插入&#x2F;删除</td></tr></tbody></table><p><strong>举例：</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line">v.<span class="built_in">insert</span>(v.<span class="built_in">begin</span>() + <span class="number">1</span>, <span class="number">4</span>);   <span class="comment">// 插入效率低，可能整体搬移</span></span><br><span class="line">std::list&lt;<span class="type">int</span>&gt; l = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line"><span class="keyword">auto</span> it = l.<span class="built_in">begin</span>();</span><br><span class="line">std::<span class="built_in">advance</span>(it, <span class="number">1</span>);          <span class="comment">// 移动到第二个元素</span></span><br><span class="line">l.<span class="built_in">insert</span>(it, <span class="number">4</span>);              <span class="comment">// 插入效率高</span></span><br></pre></td></tr></table></figure><hr><p><strong>总结：</strong></p><ul><li><code>array</code>：大小固定，适合已知长度的数组。</li><li><code>vector</code>：动态数组，适合大量随机访问和尾部插入。</li><li><code>list</code>：链表，适合频繁在任意位置插入&#x2F;删除，但不适合随机访问。</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;下面分别介绍 C++ 标准库中的 &lt;code&gt;array&lt;/code&gt;、&lt;code&gt;vector&lt;/code&gt; 和 &lt;code&gt;list&lt;/code&gt; 的区别：&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&quot;array-和-vector-的区别&quot;&gt;&lt;a href=&quot;#array-和-v</summary>
+      
+    
+    
+    
+    
+    <category term="C++" scheme="https://sfxfs.github.io/tags/C/"/>
+    
+    <category term="STL" scheme="https://sfxfs.github.io/tags/STL/"/>
+    
+  </entry>
   
   <entry>
     <title>Linux下软链接和硬链接区别</title>
@@ -560,65 +610,6 @@
     <category term="RV110x" scheme="https://sfxfs.github.io/tags/RV110x/"/>
     
     <category term="WSL" scheme="https://sfxfs.github.io/tags/WSL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Nanopi neo core 作为下位机首次配置流程</title>
-    <link href="https://sfxfs.github.io/2023/05/03/Nanopi-neo-core-%E4%BD%9C%E4%B8%BA%E4%B8%8B%E4%BD%8D%E6%9C%BA%E9%A6%96%E6%AC%A1%E9%85%8D%E7%BD%AE%E6%B5%81%E7%A8%8B/"/>
-    <id>https://sfxfs.github.io/2023/05/03/Nanopi-neo-core-%E4%BD%9C%E4%B8%BA%E4%B8%8B%E4%BD%8D%E6%9C%BA%E9%A6%96%E6%AC%A1%E9%85%8D%E7%BD%AE%E6%B5%81%E7%A8%8B/</id>
-    <published>2023-05-03T12:18:30.000Z</published>
-    <updated>2025-09-24T06:28:27.886Z</updated>
-    
-    <content type="html"><![CDATA[<p> <a href="https://detail.yinxiang.com/index.html?guid=ba0bc618-4d29-4d47-ac6c-94ee43c146a3&loginName=zz&token=V1-5045541-MYjTa8q0ZLek6LeI38RvqD5jI24sVIuET6GRx9SRx+6LylYFWfpEohLy/GvK2k1C4rP7Xzg8KW3ITmaY3ABkQrRRKV0qmmvJzOQxupLrrBHjOgO1kKvbb0qVhVeAmkvE/4Zh8sYgbnZuLLj0qaPvTHhnkf37MKJ7Y2i/Ct54j8WhHzSEjBmO0qGrJSZVbxJ0&at=false&platformType=1&deviceinfo=%7B%22application%22:%22android_miniapp%22,%22applicationVersion%22:%221.1.22%22,%22platform%22:%22microsoft%22,%22platformVersion%22:%22Windows%2011%20x64%22,%22locale%22:%22zh_CN%22%7D&unionId=f5d82db79639969b9e276eb18f7d6c98&userId=36590286&sessionId=011Yboll2OePB94SKHll2I8bMS3Ybol1&channelId=wx75425a38a3ed6402">原本的配置流程链接</a></p><h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="硬件准备"><a href="#硬件准备" class="headerlink" title="硬件准备"></a>硬件准备</h2><ol><li>NanoPi NEO Core 板子</li><li>4G 及以上的 TF 卡和读卡器</li><li>USB 转串口</li><li>水下机器人主板（提供网口和供电）</li></ol><h2 id="软件准备"><a href="#软件准备" class="headerlink" title="软件准备"></a>软件准备</h2><ol><li>安装 SSH 软件（较新的 Windows 系统一般自带，也可以去下载专门的 SSH 软件，如：<code>putty</code> 、<code>finalshell</code>、<code>MobXterm</code>等等）</li><li>串口终端（如 <code>putty</code> 、<code>MobXterm</code> 等等）</li><li>前往 <a href="https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO_Core/zh">官方 WiKi</a> 下载系统镜像，注意要下载 带 eflasher 的 Ubuntu xenial 4.14 ，即文件名类似于 <code>h3_ eflasher friendlycore-xenial_ 4.14_ armhf 20210618.img.zip</code> 的镜像文件</li></ol><h1 id="开始烧录固件"><a href="#开始烧录固件" class="headerlink" title="开始烧录固件"></a>开始烧录固件</h1><p>（全新的 Nano Pi 会内置该固件，可以直接跳到<strong>系统配置</strong>）</p><h2 id="向-SD-卡写入镜像"><a href="#向-SD-卡写入镜像" class="headerlink" title="向 SD 卡写入镜像"></a>向 SD 卡写入镜像</h2><p>使用镜像写入工具（如 <code>win32diskimager</code>），选择指定镜像烧录（烧录前请确保 SD 卡只有一个分区）</p><h2 id="使用串口连接-Nano-Pi"><a href="#使用串口连接-Nano-Pi" class="headerlink" title="使用串口连接 Nano Pi"></a>使用串口连接 Nano Pi</h2><p>请将 USB 转串口连接到 Nano Pi 的 RX0 和 TX0 引脚，并且共地，引脚图如下：</p><p><img src="https://wiki.friendlyelec.com/wiki/images/5/53/NEO_Core_pinout-02.jpg"></p><h2 id="电脑连接SBC"><a href="#电脑连接SBC" class="headerlink" title="电脑连接SBC"></a>电脑连接SBC</h2><ol><li><p>将烧录好的 SD 卡插入 Nano Pi</p></li><li><p>使用 Nano Pi 上的 USB 给板子供电</p></li><li><p>将 USB 转串口连接到电脑的串口终端</p></li><li><p>输入账户密码进行登陆（用户账号和密码都是 <code>pi</code> ，root 用户密码是 <code>fa</code>），进入系统后在终端输入 <code>su root</code> 切换 root 用户，后执行 <code>eflasher</code> 命令进入如下界面：<img src="https://wiki.friendlyelec.com/wiki/images/0/09/Eflasher_friendlycore1.jpg"></p></li><li><p>输入“１”后按回车，选择烧写 friendlycore 系统到 eMMC 上后，会提示如下信息：<img src="https://wiki.friendlyelec.com/wiki/images/6/60/Eflasher_friendlycore2_h3.jpg"></p></li><li><p>输入“yes”，确定进行烧写：</p><p><img src="https://wiki.friendlyelec.com/wiki/images/0/0c/Eflasher_friendlycore3.jpg"></p></li><li><p>等待烧写完毕后，断电并从卡槽中取出 TF 卡。</p></li></ol><h1 id="系统配置"><a href="#系统配置" class="headerlink" title="系统配置"></a>系统配置</h1><h2 id="硬件连接"><a href="#硬件连接" class="headerlink" title="硬件连接"></a>硬件连接</h2><p>将 Nano Pi 插入调试主板后，给其供电并连接网口至路由器</p><h2 id="电脑端操作"><a href="#电脑端操作" class="headerlink" title="电脑端操作"></a>电脑端操作</h2><ol><li><p>到路由器后台查看 Nano Pi 的 IP 地址，使用 SSH 工具连接至 Nano Pi （用户账号和密码都是 <code>pi</code> ，root 用户密码是 <code>fa</code>）</p></li><li><p>更换国内软件源，终端输入 <code>sudo nano /etc/apt/sources.list</code> 后修改为如下内容：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial main restricted universe multiverse</span><br><span class="line">deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial-updates main restricted universe multiverse</span><br></pre></td></tr></table></figure></li><li><p>更新软件源（依次输入以下命令）：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get clean</span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get upgrade</span><br><span class="line"></span><br><span class="line"><span class="comment">#可能需要较长时间，期间不能关闭 SSH 连接</span></span><br></pre></td></tr></table></figure></li><li><p>安装必备软件（依次输入以下命令）：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install gdb htop cmake unzip i2c-tools autoconf automake libtool</span><br><span class="line"></span><br><span class="line">sudo apt-get install libgstreamer*</span><br><span class="line"></span><br><span class="line">sudo apt-get install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-pulseaudio</span><br><span class="line"></span><br><span class="line"><span class="comment">#可能有些软件包找不到了，请在命令中删除那些软件包的名字再尝试安装</span></span><br></pre></td></tr></table></figure></li><li><p>到 Github 下载 rovmaster 的源码 zip 压缩包，使用网络传输到 Nano Pi ，在 SSH 终端中使用 <code>unzip</code> 命令进行解压</p></li><li><p>解压后进入 <strong>rov-master-main</strong> 文件夹，输入 <code>sudo chmod +x build.sh</code> 后输入 <code>sudo ./build.sh</code> 进行依赖编译</p></li><li><p>显示 <em>构建完成</em> 后，输入命令 <code>make</code> 后<strong>没有错误</strong>后，再输入一次 <code>make</code> 就会产生可执行文件 <code>rovmaster</code></p></li><li><p>使能 <code>spi1</code> 外设，输入 <code>udo npi-config</code> 命令后到 <code>\&gt; Advanced Options</code> 中使能相关 SPI 设备</p></li><li><p>修改静态 IP ，输入命令 <code>sudo nano /etc/network/interfaces</code> 后将原文件内容注释掉后加上：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug eth0</span><br><span class="line">iface eth0 inet static</span><br><span class="line">address 192.168.137.219</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.137.1</span><br><span class="line">dns-nameservers 192.168.137.1</span><br></pre></td></tr></table></figure></li><li><p>配置结束</p></li></ol>]]></content>
-    
-    
-    <summary type="html">详细介绍NanoPi NEO Core单板计算机的首次配置流程，包括系统烧录、网络配置和基础设置</summary>
-    
-    
-    
-    <category term="嵌入式开发" scheme="https://sfxfs.github.io/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/"/>
-    
-    <category term="硬件平台" scheme="https://sfxfs.github.io/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E7%A1%AC%E4%BB%B6%E5%B9%B3%E5%8F%B0/"/>
-    
-    
-    <category term="Linux" scheme="https://sfxfs.github.io/tags/Linux/"/>
-    
-    <category term="NanoPi" scheme="https://sfxfs.github.io/tags/NanoPi/"/>
-    
-    <category term="SBC" scheme="https://sfxfs.github.io/tags/SBC/"/>
-    
-    <category term="单板计算机" scheme="https://sfxfs.github.io/tags/%E5%8D%95%E6%9D%BF%E8%AE%A1%E7%AE%97%E6%9C%BA/"/>
-    
-    <category term="系统配置" scheme="https://sfxfs.github.io/tags/%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE/"/>
-    
-    <category term="嵌入式Linux" scheme="https://sfxfs.github.io/tags/%E5%B5%8C%E5%85%A5%E5%BC%8FLinux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>RockPi 5B Armbian 首次开机设置流程</title>
-    <link href="https://sfxfs.github.io/2023/04/03/RockPi-5B-Armbian-%E9%A6%96%E6%AC%A1%E5%BC%80%E6%9C%BA%E8%AE%BE%E7%BD%AE%E6%B5%81%E7%A8%8B/"/>
-    <id>https://sfxfs.github.io/2023/04/03/RockPi-5B-Armbian-%E9%A6%96%E6%AC%A1%E5%BC%80%E6%9C%BA%E8%AE%BE%E7%BD%AE%E6%B5%81%E7%A8%8B/</id>
-    <published>2023-04-03T12:35:03.000Z</published>
-    <updated>2025-09-24T06:28:27.886Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="镜像烧录"><a href="#镜像烧录" class="headerlink" title="镜像烧录"></a>镜像烧录</h2><p>下载 Armbian 最新镜像 <em>Armbian_x.x.x_Rock-5b_jammy_legacy_x.x.x_gnome_desktop.img.xz</em> 烧录到SD内（推荐使用 Raspberry Pi Imager）</p><h2 id="安装后相关设置"><a href="#安装后相关设置" class="headerlink" title="安装后相关设置"></a>安装后相关设置</h2><ol><li><p>首先启动3D加速</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:liujianfeng1994/panfork-mesa</span><br><span class="line">sudo add-apt-repository ppa:liujianfeng1994/rockchip-multimedia</span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt dist-upgrade</span><br><span class="line">sudo apt install kodi</span><br></pre></td></tr></table></figure></li><li><p>如果要使用Docker</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">update-alternatives --<span class="built_in">set</span> iptables /usr/sbin/iptables-legacy</span><br><span class="line">update-alternatives --<span class="built_in">set</span> ip6tables /usr/sbin/ip6tables-legacy</span><br></pre></td></tr></table></figure></li><li><p>安装中文字体（后把shell改为中文才不会乱码）</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ttf-wqy-microhei</span><br><span class="line">sudo apt-get install ttf-wqy-zenhei</span><br></pre></td></tr></table></figure><p>需要GUI(Gnome)也为中文可以到设置里切换语言，会自动安装</p></li><li><p>安装风扇接口驱动</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/lukaszsobala/fan-control-rock5b</span><br><span class="line"><span class="built_in">cd</span> fan-control-rock5b</span><br><span class="line">make package</span><br><span class="line">sudo dpkg -i fan-control*.deb</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> fan-control</span><br><span class="line">systemctl start fan-control</span><br></pre></td></tr></table></figure></li><li><p>安装HDMI采集卡驱动</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gstreamer1.0-rockchip1 gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly</span><br></pre></td></tr></table></figure><p>4K查看(请在显卡控制菜单中选择yuv420格式输出):</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gst-launch-1.0 -e v4l2src device=/dev/video0 ! videoconvert ! <span class="string">&#x27;video/x-raw,format=NV12,width=3840,height=2160&#x27;</span> ! autovideosink</span><br></pre></td></tr></table></figure><p>4K录制+监看(请在显卡控制菜单中选择yuv420格式输出):</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gst-launch-1.0 -e v4l2src device=/dev/video0 ! <span class="string">&#x27;video/x-raw,format=NV12,width=3840,height=2160&#x27;</span> ! <span class="built_in">tee</span> name=t t. ! mpph265enc bps=20000000 bps-max=40000000 rc-mode=vbr ! h265parse ! mp4mux name=mux ! filesink location=4k60hdmiin.mp4 alsasrc device=default ! opusenc bitrate=192000 ! mux. t. ! queue leaky=1 ! autovideosink <span class="built_in">sync</span>=<span class="literal">false</span></span><br></pre></td></tr></table></figure></li></ol><p>想要修改视频码率请更改mpph265enc bps&#x3D;和bps-max&#x3D;,单位bit&#x2F;s<br>修改音频码率请更改opusenc bitrate&#x3D;,单位bit&#x2F;s<br>不需要录音或开启录制后卡死可以把<code>alsasrc device=default ! opusenc bitrate=192000 ! mux.</code> 删掉<br>不需要监看可以把<code>t. ! queue leaky=1 ! autovideosink sync=false</code>删掉<br>需要h264格式请把mpph265enc改成mpph264enc 并把h265parse改成h264parse<br>如果报错<code>streaming stopped, reason not-negotiated (-4)</code> 首先运行dmesg看看有没有报错刷屏, 如果有,那么建议换一根好点的HDMI线. 否则检查电脑输出分辨率和格式.<br>想要其它格式和分辨率要把<code>&#39;video/x-raw,format=NV12,width=3840,height=2160&#39;</code>作对应修改! 其中format建议NV12&#x2F;NV16&#x2F;BGR&#x2F;RGB挨个试一遍<br>1080p下采集的刷新率其实不受限于60Hz, 可以在电脑上自行修改.</p><ol start="6"><li><p>A8型号的蓝牙驱动</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sudo su</span><br><span class="line">nano /etc/modprobe.d/blacklist.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">#最后一行加上以下这些</span></span><br><span class="line">blacklist pgdrv</span><br><span class="line">blacklist btusb</span><br><span class="line">blacklist btrtl</span><br><span class="line">blacklist btbcm</span><br><span class="line">blacklist btintel</span><br><span class="line"></span><br><span class="line">systemctl restart bluetooth</span><br></pre></td></tr></table></figure></li><li><p>其他定制设置</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo armbian-config</span><br></pre></td></tr></table></figure></li></ol>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;镜像烧录&quot;&gt;&lt;a href=&quot;#镜像烧录&quot; class=&quot;headerlink&quot; title=&quot;镜像烧录&quot;&gt;&lt;/a&gt;镜像烧录&lt;/h2&gt;&lt;p&gt;下载 Armbian 最新镜像 &lt;em&gt;Armbian_x.x.x_Rock-5b_jammy_legacy_x.x.x_g</summary>
-      
-    
-    
-    
-    
-    <category term="Linux" scheme="https://sfxfs.github.io/tags/Linux/"/>
-    
-    <category term="RockPi" scheme="https://sfxfs.github.io/tags/RockPi/"/>
-    
-    <category term="Armbian" scheme="https://sfxfs.github.io/tags/Armbian/"/>
     
   </entry>
   
