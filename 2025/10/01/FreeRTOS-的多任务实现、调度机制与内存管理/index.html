@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="嵌入式开发,C++,ESP32,FreeRTOS,通信协议,编程技术" />
+  <meta name="author" content="Fu Xiaofeng" />
+  <meta name="description" content="专注于嵌入式开发、C++编程和前沿技术分享的个人技术博客" />
+  
+  
+  <title>
+    
+      FreeRTOS 的多任务实现、调度机制与内存管理 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <a href="/">Xiao's Blog</a>
+</div>
+
+
+      <p class="links">
+  
+    <a title="about" target="" href="/about/">
+      <i class="iconfont icon-emoji-friendly"></i>
+    </a>
+  
+    <a title="archives" target="_blank" href="/archives/">
+      <i class="iconfont icon-bookmark"></i>
+    </a>
+  
+    <a title="github" target="_blank" href="https://github.com/sfxfs">
+      <i class="iconfont icon-github"></i>
+    </a>
+  
+    <a title="facebook" target="" href="">
+      <i class="iconfont icon-facebooksquare"></i>
+    </a>
+  
+    <a title="twitter" target="" href="">
+      <i class="iconfont icon-twitter"></i>
+    </a>
+  
+    <a title="wechat" target="" href="">
+      <i class="iconfont icon-wechat"></i>
+    </a>
+  
+    <a title="weibo" target="" href="">
+      <i class="iconfont icon-weibo"></i>
+    </a>
+  
+    <a title="rss" target="_blank" href="/atom.xml">
+      <i class="iconfont icon-rss"></i>
+    </a>
+  
+</p>
+
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Oct 01, 2025
+  </h3>
+  <h1>
+    FreeRTOS 的多任务实现、调度机制与内存管理
+  </h1>
+  <div class="content markdown-body">
+    <p>一、整体架构概览</p>
+<ul>
+<li>FreeRTOS 是单核、基于固定优先级的抢占式实时内核（也支持协作式）。</li>
+<li>任务由内核维护的任务控制块 TCB 与任务栈组成；TCB 里保存任务上下文与调度元数据。</li>
+<li>核心数据结构是多组就绪链表、延时链表、挂起链表和事件链表；调度器按“最高优先级就绪任务先运行”的规则选择任务。</li>
+<li>上下文切换由定时节拍中断（tick）或事件唤醒触发，在各体系结构的移植层（portable&#x2F;portmacro.h）通过汇编&#x2F;内联汇编保存与恢复寄存器。</li>
+</ul>
+<p>二、任务与上下文</p>
+<ul>
+<li>TCB 关键字段（不同端口略有差异）：<ul>
+<li>pxTopOfStack：当前栈顶（保存寄存器的上下文帧）。</li>
+<li>pxStack&#x2F;pxEndOfStack：任务栈起止。</li>
+<li>uxPriority：任务优先级（0..configMAX_PRIORITIES-1）。</li>
+<li>xStateListItem：把任务挂到就绪&#x2F;延时等链表用的节点。</li>
+<li>xEventListItem：等待队列&#x2F;信号量等事件列表的节点。</li>
+</ul>
+</li>
+<li>任务状态：Running、Ready、Blocked（延时或等待事件）、Suspended、Deleted。</li>
+<li>任务创建：xTaskCreate&#x2F;xTaskCreateStatic，动态或静态分配 TCB 与栈；入口是任务函数（无限循环），退出一般不返回。</li>
+</ul>
+<p>三、调度器与就绪列表</p>
+<ul>
+<li>算法：固定优先级抢占。<ul>
+<li>configUSE_PREEMPTION&#x3D;1：高优先级就绪时立即抢占。</li>
+<li>同优先级任务可时间片轮转（configUSE_TIME_SLICING&#x3D;1）。</li>
+<li>configUSE_PORT_OPTIMISED_TASK_SELECTION 可用位图快速找到最高优先级。</li>
+</ul>
+</li>
+<li>核心链表：<ul>
+<li>pxReadyTasksLists[]：每个优先级一个就绪链表。</li>
+<li>xDelayedTaskList1&#x2F;xDelayedTaskList2：延时任务的两条时间轮链表（处理 tick 计数溢出）。</li>
+<li>xSuspendedTaskList：挂起任务。</li>
+<li>每个队列&#x2F;信号量&#x2F;事件组都有一个或多个等待任务的事件链表（按优先级有序）。</li>
+</ul>
+</li>
+<li>触发调度的时机：<ul>
+<li>周期性：tick 中断（系统心跳）。</li>
+<li>任务主动让出或阻塞：taskYIELD、vTaskDelay、xQueueReceive 等。</li>
+<li>中断使更高优先级任务就绪：FromISR API 设置 xHigherPriorityTaskWoken 并触发 yield。</li>
+<li>变更优先级&#x2F;任务就绪状态：vTaskPrioritySet、xTaskResume 等。</li>
+</ul>
+</li>
+</ul>
+<p>四、上下文切换过程（以 Cortex-M 为例）</p>
+<ul>
+<li>时钟：通常用 SysTick 产生 tick；在中断里决定是否需要切换。</li>
+<li>机制：<ul>
+<li>在中断里将“需要切换”的请求转成挂起 PendSV（最低优先级的异常），避免与其他 ISR 竞争。</li>
+<li>PendSV 入口执行保存当前任务上下文（R4-R11 等）到其任务栈，更新当前 TCB-&gt;pxTopOfStack。</li>
+<li>选择下一个任务（最高优先级 ready 列表的链表头）。</li>
+<li>从新任务的栈恢复上下文，退出异常返回到新任务。</li>
+</ul>
+</li>
+<li>关键宏&#x2F;函数：portYIELD_FROM_ISR、portEND_SWITCHING_ISR、portSET_INTERRUPT_MASK_FROM_ISR&#x2F;portCLEAR…、vTaskSwitchContext、portSAVE_CONTEXT&#x2F;portRESTORE_CONTEXT。</li>
+<li>临界区：taskENTER_CRITICAL&#x2F;taskEXIT_CRITICAL（Cortex-M 常用 BASEPRI 屏蔽优先级阈值）。</li>
+</ul>
+<p>五、阻塞与事件同步</p>
+<ul>
+<li>延时：vTaskDelay&#x2F;xTaskDelayUntil 将任务移入延时链表，tick 递减到期后移回就绪链表。</li>
+<li>等待队列&#x2F;信号量&#x2F;互斥量&#x2F;事件组：<ul>
+<li>任务进入 Blocked 并挂到对应对象的事件链表，支持超时。</li>
+<li>释放事件时按优先级唤醒一个或多个任务。</li>
+</ul>
+</li>
+<li>互斥的优先级继承：configUSE_MUTEXES&#x3D;1 且 configUSE_PRIORITY_INHERITANCE&#x3D;1 时生效，减少优先级反转。</li>
+<li>软件定时器：单独的定时器服务任务处理回调（deferred execution）。</li>
+</ul>
+<p>六、时间片与低功耗</p>
+<ul>
+<li>同优先级时间片：tick 到来时轮转链表头到尾；使同优先级公平。</li>
+<li>Tickless Idle：configUSE_TICKLESS_IDLE&#x3D;1，空闲时暂停节拍定时器，设定低功耗定时器在下一个唤醒点触发，醒来补偿丢失的 tick，显著降功耗。</li>
+</ul>
+<p>七、内存管理</p>
+<ol>
+<li>任务栈与 TCB</li>
+</ol>
+<ul>
+<li>动态分配：xTaskCreate 使用 pvPortMalloc 为 TCB 和栈分配内存。</li>
+<li>静态分配：xTaskCreateStatic 由用户提供 TCB 与栈缓冲（configSUPPORT_STATIC_ALLOCATION&#x3D;1）。</li>
+<li>栈大小以“栈宽度单位”（StackType_t）指定，依端口是 4&#x2F;8 字节。</li>
+<li>栈溢出检测：configCHECK_FOR_STACK_OVERFLOW（模式 1&#x2F;2）+ vApplicationStackOverflowHook。</li>
+</ul>
+<ol start="2">
+<li>内核对象</li>
+</ol>
+<ul>
+<li>队列、信号量、事件组、定时器等均可动态或静态创建（如 xQueueCreateStatic、xSemaphoreCreateBinaryStatic）。</li>
+<li>定时器服务任务与空闲任务可由应用提供静态内存：vApplicationGetTimerTaskMemory&#x2F;vApplicationGetIdleTaskMemory。</li>
+</ul>
+<ol start="3">
+<li>堆实现（heap_1..heap_5）</li>
+</ol>
+<ul>
+<li>heap_1：仅分配不释放，最简单、无碎片，适合启动期一次性分配。</li>
+<li>heap_2：带释放，简单空闲链表，不合并相邻空闲块，易碎片。</li>
+<li>heap_3：封装标准库 malloc&#x2F;free，线程安全由 FreeRTOS 临界区保护，但实时性取决于 libc。</li>
+<li>heap_4：最佳适配 + 合并相邻空闲块，通用、实时性较好，推荐默认。</li>
+<li>heap_5：多内存区域版本的 heap_4，可配置多个不连续内存段（适合分散 RAM）。</li>
+<li>选择方式：在 FreeRTOSConfig.h 通过包含相应的 portable&#x2F;MemMang&#x2F;heap_x.c 实现一个 pvPortMalloc&#x2F;vPortFree。</li>
+<li>线程安全：内核通过临界区保护 pvPortMalloc&#x2F;vPortFree，使其在任务&#x2F;中断上下文安全（FromISR 不允许分配）。</li>
+</ul>
+<ol start="4">
+<li>注意与建议</li>
+</ol>
+<ul>
+<li>中断上下文禁止调用会触发阻塞或动态分配的 API；ISR 使用 FromISR 变体，且不能调用 pvPortMalloc。</li>
+<li>控制碎片：优先使用静态创建或集中在系统初始化阶段一次性动态创建；若需运行期创建&#x2F;删除，选择 heap_4&#x2F;5。</li>
+<li>监控：启用 configUSE_MALLOC_FAILED_HOOK 与 vApplicationMallocFailedHook；配置 uxTaskGetStackHighWaterMark 监控栈余量。</li>
+</ul>
+<p>八、常用配置项速览</p>
+<ul>
+<li>configUSE_PREEMPTION、configUSE_TIME_SLICING、configTICK_RATE_HZ、configMAX_PRIORITIES</li>
+<li>configSUPPORT_STATIC_ALLOCATION、configSUPPORT_DYNAMIC_ALLOCATION</li>
+<li>configCHECK_FOR_STACK_OVERFLOW、configUSE_IDLE_HOOK、configUSE_TICK_HOOK、configUSE_TICKLESS_IDLE</li>
+<li>configUSE_MUTEXES、configUSE_RECURSIVE_MUTEXES、configUSE_COUNTING_SEMAPHORES、configUSE_TASK_NOTIFICATIONS</li>
+<li>configQUEUE_REGISTRY_SIZE（队列注册调试）、configASSERT（断言）</li>
+<li>端口相关：configCPU_CLOCK_HZ、configPRIO_BITS、configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY、configKERNEL_INTERRUPT_PRIORITY、configMAX_SYSCALL_INTERRUPT_PRIORITY</li>
+</ul>
+<p>九、常见排障思路</p>
+<ul>
+<li>任务不切换：检查中断优先级配置（尤其 Cortex-M 的 BASEPRI）、SysTick&#x2F;PendSV 使能、portYIELD_FROM_ISR 的使用。</li>
+<li>高优先级“饿死”低优先级：确认是否需要 time slicing 或在高优先级任务里适当阻塞&#x2F;让出。</li>
+<li>栈溢出&#x2F;硬 Fault：开启栈溢出检测、增大疑似任务栈、检查递归&#x2F;大数组。</li>
+<li>内存不足&#x2F;碎片：切换到 heap_4&#x2F;5，改为静态分配或对象池，合并创建&#x2F;删除路径。</li>
+<li>优先级反转：使用互斥量而非二值信号量并开启优先级继承。</li>
+</ul>
+<p>如果你有目标平台（如 Cortex-M、RISC-V、Xtensa）或具体 FreeRTOS 版本&#x2F;配置，我可以结合该端口画出更具体的上下文切换序列图与关键寄存器保存&#x2F;恢复细节，并给出 FreeRTOSConfig.h 的参考配置。</p>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2025/09/30/FreeRTOS%E4%B8%AD%E7%9A%84SysTick%E3%80%81SVCall%E5%92%8CPend/">OLDER&nbsp;&gt;</a>
+      
+        
+            
+</div>
+        <div class="footer">
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/sfxfs">Copyright © Xiao 2025</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/leedom92/hexo-theme-leedom">Theme by Leedom | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-box">
+        <div class="search-title">
+          <!-- <span class="search-icon-input">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </span> -->
+          
+            <input type="text" class="search-input" id="search-input" placeholder="搜索">
+          
+          <span class="search-close-icon" id="search-close-icon">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-close"></i>
+            </a>
+          </span>
+        </div>
+        <div class="search-result" id="search-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    // inputArea.onclick = function() {
+    //   getSearchFile()
+    //   this.onclick = null
+    // }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        inputArea.focus()
+        getSearchFile()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'><span></ul>";
+      // $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'><h2>" + orig_data_title + "</h2></a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<h3 class=\"search-result-abstract\">" + match_content + "...</h3>"
+                }
+                str += "<hr></li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/leedom92/hexo-theme-leedom#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
