@@ -524,9 +524,9 @@
     <category term="C语言" scheme="https://sfxfs.github.io/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C%E8%AF%AD%E8%A8%80/"/>
     
     
-    <category term="编程技巧" scheme="https://sfxfs.github.io/tags/%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/"/>
-    
     <category term="C语言" scheme="https://sfxfs.github.io/tags/C%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="编程技巧" scheme="https://sfxfs.github.io/tags/%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/"/>
     
     <category term="数据类型" scheme="https://sfxfs.github.io/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     
@@ -561,9 +561,9 @@
     
     <category term="理论基础" scheme="https://sfxfs.github.io/tags/%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/"/>
     
-    <category term="串行通信" scheme="https://sfxfs.github.io/tags/%E4%B8%B2%E8%A1%8C%E9%80%9A%E4%BF%A1/"/>
-    
     <category term="UART" scheme="https://sfxfs.github.io/tags/UART/"/>
+    
+    <category term="串行通信" scheme="https://sfxfs.github.io/tags/%E4%B8%B2%E8%A1%8C%E9%80%9A%E4%BF%A1/"/>
     
     <category term="异步通信" scheme="https://sfxfs.github.io/tags/%E5%BC%82%E6%AD%A5%E9%80%9A%E4%BF%A1/"/>
     
@@ -594,9 +594,9 @@
     
     <category term="理论基础" scheme="https://sfxfs.github.io/tags/%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/"/>
     
-    <category term="SPI" scheme="https://sfxfs.github.io/tags/SPI/"/>
-    
     <category term="串行通信" scheme="https://sfxfs.github.io/tags/%E4%B8%B2%E8%A1%8C%E9%80%9A%E4%BF%A1/"/>
+    
+    <category term="SPI" scheme="https://sfxfs.github.io/tags/SPI/"/>
     
     <category term="主从通信" scheme="https://sfxfs.github.io/tags/%E4%B8%BB%E4%BB%8E%E9%80%9A%E4%BF%A1/"/>
     

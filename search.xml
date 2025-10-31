@@ -497,9 +497,9 @@
       
         <tags>
             
-            <tag> 编程技巧 </tag>
-            
             <tag> C语言 </tag>
+            
+            <tag> 编程技巧 </tag>
             
             <tag> 数据类型 </tag>
             
@@ -538,9 +538,9 @@
             
             <tag> 理论基础 </tag>
             
-            <tag> 串行通信 </tag>
-            
             <tag> UART </tag>
+            
+            <tag> 串行通信 </tag>
             
             <tag> 异步通信 </tag>
             
@@ -575,9 +575,9 @@
             
             <tag> 理论基础 </tag>
             
-            <tag> SPI </tag>
-            
             <tag> 串行通信 </tag>
+            
+            <tag> SPI </tag>
             
             <tag> 主从通信 </tag>
             
