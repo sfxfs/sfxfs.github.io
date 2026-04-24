@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="嵌入式开发,C/C++,ESP32,FreeRTOS,通信协议,编程技术" />
+  <meta name="author" content="Fu Xiaofeng" />
+  <meta name="description" content="专注于嵌入式开发、C/C++编程和前沿技术分享的个人技术博客" />
+  
+  
+  <title>
+    
+      DeepSeek V4 正式发布：1.6T 参数开源大模型，1M 上下文成为标配 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <a href="/">Xiao's Blog</a>
+</div>
+
+
+      <p class="links">
+  
+    <a title="about" target="" href="/about/">
+      <i class="iconfont icon-emoji-friendly"></i>
+    </a>
+  
+    <a title="archives" target="_blank" href="/archives/">
+      <i class="iconfont icon-bookmark"></i>
+    </a>
+  
+    <a title="github" target="_blank" href="https://github.com/sfxfs">
+      <i class="iconfont icon-github"></i>
+    </a>
+  
+    <a title="facebook" target="" href="">
+      <i class="iconfont icon-facebooksquare"></i>
+    </a>
+  
+    <a title="twitter" target="" href="">
+      <i class="iconfont icon-twitter"></i>
+    </a>
+  
+    <a title="wechat" target="" href="">
+      <i class="iconfont icon-wechat"></i>
+    </a>
+  
+    <a title="weibo" target="" href="">
+      <i class="iconfont icon-weibo"></i>
+    </a>
+  
+    <a title="rss" target="_blank" href="/atom.xml">
+      <i class="iconfont icon-rss"></i>
+    </a>
+  
+</p>
+
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<div class="post">
+  <h3 class="date">
+    Apr 24, 2026
+  </h3>
+  <h1>
+    DeepSeek V4 正式发布：1.6T 参数开源大模型，1M 上下文成为标配
+  </h1>
+  <div class="content markdown-body">
+    <h1 id="DeepSeek-V4-正式发布：1-6T-参数开源大模型，1M-上下文成为标配"><a href="#DeepSeek-V4-正式发布：1-6T-参数开源大模型，1M-上下文成为标配" class="headerlink" title="DeepSeek V4 正式发布：1.6T 参数开源大模型，1M 上下文成为标配"></a>DeepSeek V4 正式发布：1.6T 参数开源大模型，1M 上下文成为标配</h1><blockquote>
+<p>发布日期：2026 年 4 月 24 日</p>
+</blockquote>
+<h2 id="核心亮点"><a href="#核心亮点" class="headerlink" title="核心亮点"></a>核心亮点</h2><p>DeepSeek V4 Preview 今日正式发布并完全开源，标志着大模型进入<strong>高性价比的 1M 上下文长度时代</strong>。</p>
+<p>本次发布包含两个版本：</p>
+<ul>
+<li><strong>DeepSeek-V4-Pro</strong>：1.6T 总参数 &#x2F; 49B 激活参数，性能媲美世界顶级闭源模型</li>
+<li><strong>DeepSeek-V4-Flash</strong>：284B 总参数 &#x2F; 13B 激活参数，快速、高效、经济的选择</li>
+</ul>
+<p>用户可立即通过 <a target="_blank" rel="noopener" href="https://chat.deepseek.com/">chat.deepseek.com</a> 的 Expert Mode &#x2F; Instant Mode 体验，API 已同步更新可用。</p>
+<hr>
+<h2 id="DeepSeek-V4-Pro：开源模型的性能巅峰"><a href="#DeepSeek-V4-Pro：开源模型的性能巅峰" class="headerlink" title="DeepSeek-V4-Pro：开源模型的性能巅峰"></a>DeepSeek-V4-Pro：开源模型的性能巅峰</h2><h3 id="三大核心优势"><a href="#三大核心优势" class="headerlink" title="三大核心优势"></a>三大核心优势</h3><p><strong>1. 增强的 Agent 能力</strong></p>
+<ul>
+<li>在 Agentic Coding 基准测试中达到开源模型 SOTA（State of the Art）</li>
+<li>已与 Claude Code、OpenClaw、OpenCode 等主流 AI 智能体框架深度集成</li>
+<li>已在 DeepSeek 内部驱动智能体编码工作流</li>
+</ul>
+<p><strong>2. 丰富的世界知识</strong></p>
+<ul>
+<li>在所有当前开源模型中领先</li>
+<li>仅次于 Gemini-3.1-Pro</li>
+</ul>
+<p><strong>3. 世界级的推理能力</strong></p>
+<ul>
+<li>在数学、STEM、编程领域超越所有当前开源模型</li>
+<li>性能媲美顶级闭源模型</li>
+</ul>
+<hr>
+<h2 id="DeepSeek-V4-Flash：高效经济的理想选择"><a href="#DeepSeek-V4-Flash：高效经济的理想选择" class="headerlink" title="DeepSeek-V4-Flash：高效经济的理想选择"></a>DeepSeek-V4-Flash：高效经济的理想选择</h2><h3 id="核心特性"><a href="#核心特性" class="headerlink" title="核心特性"></a>核心特性</h3><ul>
+<li><strong>推理能力接近 V4-Pro</strong>：在推理任务上表现与 Pro 版非常接近</li>
+<li><strong>Agent 任务表现相当</strong>：在简单 Agent 任务上与 V4-Pro 性能持平</li>
+<li><strong>更小的参数规模</strong>：更快的响应速度，极具成本效益的 API 定价</li>
+</ul>
+<hr>
+<h2 id="架构创新与超高上下文效率"><a href="#架构创新与超高上下文效率" class="headerlink" title="架构创新与超高上下文效率"></a>架构创新与超高上下文效率</h2><h3 id="技术突破"><a href="#技术突破" class="headerlink" title="技术突破"></a>技术突破</h3><p><strong>1. 全新注意力机制</strong></p>
+<ul>
+<li>Token-wise 压缩 + DSA（DeepSeek Sparse Attention，深度稀疏注意力）</li>
+</ul>
+<p><strong>2. 极致效率</strong></p>
+<ul>
+<li>世界领先的长上下文处理能力</li>
+<li>大幅降低计算和内存成本</li>
+</ul>
+<p><strong>3. 1M 上下文成为标配</strong></p>
+<ul>
+<li>1M 上下文长度现在是所有 DeepSeek 官方服务的默认配置</li>
+</ul>
+<hr>
+<h2 id="API-与定价"><a href="#API-与定价" class="headerlink" title="API 与定价"></a>API 与定价</h2><h3 id="模型规格对比"><a href="#模型规格对比" class="headerlink" title="模型规格对比"></a>模型规格对比</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>DeepSeek-V4-Flash</th>
+<th>DeepSeek-V4-Pro</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>模型版本</td>
+<td>DeepSeek-V4-Flash</td>
+<td>DeepSeek-V4-Pro</td>
+</tr>
+<tr>
+<td>总参数 &#x2F; 激活参数</td>
+<td>284B &#x2F; 13B</td>
+<td>1.6T &#x2F; 49B</td>
+</tr>
+<tr>
+<td>上下文长度</td>
+<td>1M</td>
+<td>1M</td>
+</tr>
+<tr>
+<td>最大输出</td>
+<td>384K</td>
+<td>384K</td>
+</tr>
+<tr>
+<td>思考模式</td>
+<td>支持非思考&#x2F;思考模式（默认思考）</td>
+<td>支持非思考&#x2F;思考模式</td>
+</tr>
+<tr>
+<td>JSON 输出</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>工具调用</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>前缀补全（Beta）</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>FIM 补全（Beta）</td>
+<td>仅非思考模式</td>
+<td>仅非思考模式</td>
+</tr>
+</tbody></table>
+<h3 id="定价（每-1M-tokens）"><a href="#定价（每-1M-tokens）" class="headerlink" title="定价（每 1M tokens）"></a>定价（每 1M tokens）</h3><table>
+<thead>
+<tr>
+<th>计费项</th>
+<th>V4-Flash</th>
+<th>V4-Pro</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入（缓存命中）</td>
+<td>$0.028</td>
+<td>$0.145</td>
+</tr>
+<tr>
+<td>输入（缓存未命中）</td>
+<td>$0.14</td>
+<td>$1.74</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>$0.28</td>
+<td>$3.48</td>
+</tr>
+</tbody></table>
+<h3 id="API-使用方式"><a href="#API-使用方式" class="headerlink" title="API 使用方式"></a>API 使用方式</h3><p><strong>OpenAI 兼容格式：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">curl https://api.deepseek.com/chat/completions \</span><br><span class="line">  -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">  -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;DEEPSEEK_API_KEY&#125;</span>&quot;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;model&quot;: &quot;deepseek-v4-pro&quot;,</span></span><br><span class="line"><span class="string">    &quot;messages&quot;: [</span></span><br><span class="line"><span class="string">      &#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;,</span></span><br><span class="line"><span class="string">      &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot;&#125;</span></span><br><span class="line"><span class="string">    ],</span></span><br><span class="line"><span class="string">    &quot;thinking&quot;: &#123;&quot;type&quot;: &quot;enabled&quot;&#125;,</span></span><br><span class="line"><span class="string">    &quot;reasoning_effort&quot;: &quot;high&quot;,</span></span><br><span class="line"><span class="string">    &quot;stream&quot;: false</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Anthropic 兼容格式：</strong></p>
+<ul>
+<li>Base URL: <code>https://api.deepseek.com/anthropic</code></li>
+</ul>
+<h3 id="重要迁移提示"><a href="#重要迁移提示" class="headerlink" title="重要迁移提示"></a>重要迁移提示</h3><p>⚠️ <code>deepseek-chat</code> 和 <code>deepseek-reasoner</code> 将于 <strong>2026 年 7 月 24 日</strong> 正式停用。</p>
+<ul>
+<li>当前 <code>deepseek-chat</code> → 映射到 <code>deepseek-v4-flash</code> 的非思考模式</li>
+<li>当前 <code>deepseek-reasoner</code> → 映射到 <code>deepseek-v4-flash</code> 的思考模式</li>
+</ul>
+<p>建议开发者尽快迁移到新的模型名称。</p>
+<hr>
+<h2 id="开源资源"><a href="#开源资源" class="headerlink" title="开源资源"></a>开源资源</h2><ul>
+<li><strong>技术报告</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/DeepSeek_V4.pdf">HuggingFace PDF</a></li>
+<li><strong>开源权重</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/collections/deepseek-ai/deepseek-v4">HuggingFace 集合</a></li>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/deepseek-ai">deepseek-ai</a></li>
+</ul>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>DeepSeek V4 的发布是开源大模型领域的重要里程碑：</p>
+<ol>
+<li><strong>Pro 版</strong>以 1.6T 总参数达到开源 SOTA，在 Agent 能力、世界知识和推理方面全面领先</li>
+<li><strong>Flash 版</strong>以极高的性价比，让 1M 上下文和强大推理能力触手可及</li>
+<li><strong>架构创新</strong>（Token-wise 压缩 + DSA）让超长上下文处理变得经济可行</li>
+<li><strong>完全开源</strong>的权重和技术报告，持续推动开源社区发展</li>
+</ol>
+<p>DeepSeek 表示将继续坚持长期主义，稳步推进实现 AGI 的终极目标。</p>
+<blockquote>
+<p>🔗 官方信息来源：<a target="_blank" rel="noopener" href="https://api-docs.deepseek.com/">DeepSeek API 文档</a> | <a target="_blank" rel="noopener" href="https://api-docs.deepseek.com/news/news260424">发布新闻</a></p>
+<p>⚠️ 提醒：请关注 DeepSeek 官方渠道获取准确信息，其他渠道的声明不代表 DeepSeek 观点。</p>
+</blockquote>
+
+  </div>
+  
+    
+      <a id="older" class="blog-nav" href="/2025/10/28/%E4%BA%91%E8%AE%A1%E7%AE%97-IaaS-PaaS-SaaS-%E7%9A%84%E5%8C%BA%E5%88%AB/">OLDER&nbsp;&gt;</a>
+      
+        
+            
+</div>
+        <div class="footer">
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/sfxfs">Copyright © Xiao 2025</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/leedom92/hexo-theme-leedom">Theme by Leedom | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-box">
+        <div class="search-title">
+          <!-- <span class="search-icon-input">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </span> -->
+          
+            <input type="text" class="search-input" id="search-input" placeholder="搜索">
+          
+          <span class="search-close-icon" id="search-close-icon">
+            <a href="javascript: void(0)">
+              <i class="iconfont icon-close"></i>
+            </a>
+          </span>
+        </div>
+        <div class="search-result" id="search-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    // inputArea.onclick = function() {
+    //   getSearchFile()
+    //   this.onclick = null
+    // }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        inputArea.focus()
+        getSearchFile()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'><span></ul>";
+      // $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'><h2>" + orig_data_title + "</h2></a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<h3 class=\"search-result-abstract\">" + match_content + "...</h3>"
+                }
+                str += "<hr></li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/leedom92/hexo-theme-leedom#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
