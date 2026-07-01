@@ -50,7 +50,7 @@
 <script src="/js/fancybox.js"></script>
 
 
-<meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+<meta name="generator" content="Hexo 8.1.2"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
 </head>
 
 
@@ -122,10 +122,24 @@
     Linux和裸机程序内存布局
   </h1>
   <div class="content markdown-body">
-    <p>所谓的“进程的内存”通常指的是进程的<strong>虚拟地址空间（Virtual Address Space）</strong>，而不是直接的物理内存。</p>
+    <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#linux">Linux 进程虚拟地址空间</a><ul>
+<li><a href="#%E8%BF%9B%E7%A8%8B%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%9A%84%E4%B8%BB%E8%A6%81%E5%88%86%E5%8C%BA">进程虚拟地址空间的主要分区</a></li>
+<li><a href="#%E5%86%85%E5%AD%98%E6%8E%92%E5%B8%83%E5%92%8C%E5%9C%B0%E5%9D%80%E5%A2%9E%E9%95%BF%E6%96%B9%E5%90%91">内存排布和地址增长方向</a></li>
+<li><a href="#%E6%8C%89%E9%9C%80%E5%88%86%E9%A1%B5">按需分页</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A3%B8%E6%9C%BAstm32">裸机（STM32）内存布局</a><ul>
+<li><a href="#stm32-%E5%BE%AE%E6%8E%A7%E5%88%B6%E5%99%A8%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80">STM32 微控制器的内存布局</a></li>
+<li><a href="#%E4%B8%8E-pc-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%85%B3%E9%94%AE%E5%8C%BA%E5%88%AB">与 PC 内存模型的关键区别</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>所谓的“进程的内存”通常指的是进程的<strong>虚拟地址空间（Virtual Address Space）</strong>，而不是直接的物理内存。</p>
 <p>每个进程都有一个独立、私有的虚拟地址空间，操作系统（如 Linux）会将这个空间划分为几个主要区域，并进行特定的排列。</p>
 <hr>
-<h1 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h1><h2 id="进程虚拟地址空间的主要分区"><a href="#进程虚拟地址空间的主要分区" class="headerlink" title="进程虚拟地址空间的主要分区"></a>进程虚拟地址空间的主要分区</h2><p>一个进程的虚拟地址空间通常从低地址向高地址延伸，主要被划分为以下几个区域：</p>
+<h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><h3 id="进程虚拟地址空间的主要分区"><a href="#进程虚拟地址空间的主要分区" class="headerlink" title="进程虚拟地址空间的主要分区"></a>进程虚拟地址空间的主要分区</h3><p>一个进程的虚拟地址空间通常从低地址向高地址延伸，主要被划分为以下几个区域：</p>
 <h3 id="1-代码段（Text-Segment-Code-Segment）"><a href="#1-代码段（Text-Segment-Code-Segment）" class="headerlink" title="1. 代码段（Text Segment &#x2F; Code Segment）"></a>1. <strong>代码段（Text Segment &#x2F; Code Segment）</strong></h3><ul>
 <li><strong>内容</strong>：存放进程执行的<strong>机器指令</strong>（程序代码）。</li>
 <li><strong>特性</strong>：通常是<strong>只读</strong>的，以防止程序意外地修改自身的指令。它可以被多个进程共享（例如多个进程运行同一个程序）。</li>
@@ -244,7 +258,8 @@
 <td></td>
 </tr>
 </tbody></table>
-<h3 id="按需分页（Demand-Paging）"><a href="#按需分页（Demand-Paging）" class="headerlink" title="按需分页（Demand Paging）"></a>按需分页（Demand Paging）</h3><p>真正的效率提升在于**按需分页（Demand Paging）**机制：</p>
+<hr>
+<h2 id="按需分页（Demand-Paging）"><a href="#按需分页（Demand-Paging）" class="headerlink" title="按需分页（Demand Paging）"></a>按需分页（Demand Paging）</h2><p>真正的效率提升在于**按需分页（Demand Paging）**机制：</p>
 <ul>
 <li><strong>初始状态</strong>：动态库被映射后，其对应的虚拟地址并没有实际的物理内存页与之对应。</li>
 <li><strong>首次访问</strong>：当程序第一次试图执行动态库中的某个函数或访问某个数据时，CPU 会根据虚拟地址去查找<strong>页表</strong>。此时发现该页还没有加载到物理内存，会触发一个<strong>缺页中断（Page Fault）</strong>。</li>
@@ -255,8 +270,8 @@
 <p>STM32 微控制器<strong>没有</strong>操作系统提供的复杂的<strong>虚拟内存</strong>机制，也没有进程的概念。它的内存布局直接对应于其<strong>物理内存</strong>和<strong>片上外设</strong>的地址空间。</p>
 <p>STM32 的内存布局是<strong>固定</strong>的，由其内部架构（基于 ARM Cortex-M 内核）决定，主要分为以下几个关键区域：</p>
 <hr>
-<h2 id="STM32-微控制器的内存布局"><a href="#STM32-微控制器的内存布局" class="headerlink" title="STM32 微控制器的内存布局"></a>STM32 微控制器的内存布局</h2><p><img src="/2025/09/30/Linux%E5%92%8C%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/1.png"></p>
-<p>STM32 采用**哈佛结构（Harvard Architecture）*<em>或*<em>改进的冯·诺依曼结构</em></em>，其中代码和数据可以分开访问。其内存空间被划分为几个主要区域，每个区域都有一个固定的地址范围。</p>
+<h2 id="裸机（STM32）-1"><a href="#裸机（STM32）-1" class="headerlink" title="裸机（STM32）"></a>裸机（STM32）</h2><h3 id="STM32-微控制器的内存布局"><a href="#STM32-微控制器的内存布局" class="headerlink" title="STM32 微控制器的内存布局"></a>STM32 微控制器的内存布局</h3><p><img src="/2025/09/30/Linux%E5%92%8C%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/1.png" alt="STM32 内存布局示意图"></p>
+<p>STM32 采用<strong>哈佛结构（Harvard Architecture）<strong>或</strong>改进的冯·诺依曼结构</strong>，其中代码和数据可以分开访问。其内存空间被划分为几个主要区域，每个区域都有一个固定的地址范围。</p>
 <h3 id="1-闪存（Flash-Memory）-CODE-区"><a href="#1-闪存（Flash-Memory）-CODE-区" class="headerlink" title="1. 闪存（Flash Memory） - CODE 区"></a>1. 闪存（Flash Memory） - CODE 区</h3><table>
 <thead>
 <tr>
@@ -355,7 +370,7 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="与-PC-内存模型的关键区别"><a href="#与-PC-内存模型的关键区别" class="headerlink" title="与 PC 内存模型的关键区别"></a>与 PC 内存模型的关键区别</h2><table>
+<h3 id="与-PC-内存模型的关键区别"><a href="#与-PC-内存模型的关键区别" class="headerlink" title="与 PC 内存模型的关键区别"></a>与 PC 内存模型的关键区别</h3><table>
 <thead>
 <tr>
 <th>特性</th>

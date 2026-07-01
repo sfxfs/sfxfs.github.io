@@ -50,7 +50,7 @@
 <script src="/js/fancybox.js"></script>
 
 
-<meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+<meta name="generator" content="Hexo 8.1.2"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
 </head>
 
 
@@ -122,15 +122,25 @@
     FreeRTOS 的多任务实现、调度机制与内存管理
   </h1>
   <div class="content markdown-body">
-    <p>一、整体架构概览</p>
-<ul>
+    <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#%E4%B8%80%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E6%A6%82%E8%A7%88">一、整体架构概览</a></li>
+<li><a href="#%E4%BA%8C%E4%BB%BB%E5%8A%A1%E4%B8%8E%E4%B8%8A%E4%B8%8B%E6%96%87">二、任务与上下文</a></li>
+<li><a href="#%E4%B8%89%E8%B0%83%E5%BA%A6%E5%99%A8%E4%B8%8E%E5%B0%B1%E7%BB%AA%E5%88%97%E8%A1%A8">三、调度器与就绪列表</a></li>
+<li><a href="#%E5%9B%9B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E8%BF%87%E7%A8%8B%E4%BB%A5-cortex-m-%E4%B8%BA%E4%BE%8B">四、上下文切换过程</a></li>
+<li><a href="#%E4%BA%94%E9%98%BB%E5%A1%9E%E4%B8%8E%E4%BA%8B%E4%BB%B6%E5%90%8C%E6%AD%A5">五、阻塞与事件同步</a></li>
+<li><a href="#%E5%85%AD%E6%97%B6%E9%97%B4%E7%89%87%E4%B8%8E%E4%BD%8E%E5%8A%9F%E8%80%97">六、时间片与低功耗</a></li>
+<li><a href="#%E4%B8%83%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86">七、内存管理</a></li>
+<li><a href="#%E5%85%AB%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9%E9%80%9F%E8%A7%88">八、常用配置项速览</a></li>
+<li><a href="#%E4%B9%9D%E5%B8%B8%E8%A7%81%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF">九、常见排障思路</a></li>
+</ul>
+<hr>
+<h2 id="一、整体架构概览"><a href="#一、整体架构概览" class="headerlink" title="一、整体架构概览"></a>一、整体架构概览</h2><ul>
 <li>FreeRTOS 是单核、基于固定优先级的抢占式实时内核（也支持协作式）。</li>
 <li>任务由内核维护的任务控制块 TCB 与任务栈组成；TCB 里保存任务上下文与调度元数据。</li>
 <li>核心数据结构是多组就绪链表、延时链表、挂起链表和事件链表；调度器按“最高优先级就绪任务先运行”的规则选择任务。</li>
 <li>上下文切换由定时节拍中断（tick）或事件唤醒触发，在各体系结构的移植层（portable&#x2F;portmacro.h）通过汇编&#x2F;内联汇编保存与恢复寄存器。</li>
 </ul>
-<p>二、任务与上下文</p>
-<ul>
+<h2 id="二、任务与上下文"><a href="#二、任务与上下文" class="headerlink" title="二、任务与上下文"></a>二、任务与上下文</h2><ul>
 <li>TCB 关键字段（不同端口略有差异）：<ul>
 <li>pxTopOfStack：当前栈顶（保存寄存器的上下文帧）。</li>
 <li>pxStack&#x2F;pxEndOfStack：任务栈起止。</li>
@@ -142,8 +152,7 @@
 <li>任务状态：Running、Ready、Blocked（延时或等待事件）、Suspended、Deleted。</li>
 <li>任务创建：xTaskCreate&#x2F;xTaskCreateStatic，动态或静态分配 TCB 与栈；入口是任务函数（无限循环），退出一般不返回。</li>
 </ul>
-<p>三、调度器与就绪列表</p>
-<ul>
+<h2 id="三、调度器与就绪列表"><a href="#三、调度器与就绪列表" class="headerlink" title="三、调度器与就绪列表"></a>三、调度器与就绪列表</h2><ul>
 <li>算法：固定优先级抢占。<ul>
 <li>configUSE_PREEMPTION&#x3D;1：高优先级就绪时立即抢占。</li>
 <li>同优先级任务可时间片轮转（configUSE_TIME_SLICING&#x3D;1）。</li>
@@ -165,8 +174,7 @@
 </ul>
 </li>
 </ul>
-<p>四、上下文切换过程（以 Cortex-M 为例）</p>
-<ul>
+<h2 id="四、上下文切换过程（以-Cortex-M-为例）"><a href="#四、上下文切换过程（以-Cortex-M-为例）" class="headerlink" title="四、上下文切换过程（以 Cortex-M 为例）"></a>四、上下文切换过程（以 Cortex-M 为例）</h2><ul>
 <li>时钟：通常用 SysTick 产生 tick；在中断里决定是否需要切换。</li>
 <li>机制：<ul>
 <li>在中断里将“需要切换”的请求转成挂起 PendSV（最低优先级的异常），避免与其他 ISR 竞争。</li>
@@ -178,8 +186,7 @@
 <li>关键宏&#x2F;函数：portYIELD_FROM_ISR、portEND_SWITCHING_ISR、portSET_INTERRUPT_MASK_FROM_ISR&#x2F;portCLEAR…、vTaskSwitchContext、portSAVE_CONTEXT&#x2F;portRESTORE_CONTEXT。</li>
 <li>临界区：taskENTER_CRITICAL&#x2F;taskEXIT_CRITICAL（Cortex-M 常用 BASEPRI 屏蔽优先级阈值）。</li>
 </ul>
-<p>五、阻塞与事件同步</p>
-<ul>
+<h2 id="五、阻塞与事件同步"><a href="#五、阻塞与事件同步" class="headerlink" title="五、阻塞与事件同步"></a>五、阻塞与事件同步</h2><ul>
 <li>延时：vTaskDelay&#x2F;xTaskDelayUntil 将任务移入延时链表，tick 递减到期后移回就绪链表。</li>
 <li>等待队列&#x2F;信号量&#x2F;互斥量&#x2F;事件组：<ul>
 <li>任务进入 Blocked 并挂到对应对象的事件链表，支持超时。</li>
@@ -189,32 +196,21 @@
 <li>互斥的优先级继承：configUSE_MUTEXES&#x3D;1 且 configUSE_PRIORITY_INHERITANCE&#x3D;1 时生效，减少优先级反转。</li>
 <li>软件定时器：单独的定时器服务任务处理回调（deferred execution）。</li>
 </ul>
-<p>六、时间片与低功耗</p>
-<ul>
+<h2 id="六、时间片与低功耗"><a href="#六、时间片与低功耗" class="headerlink" title="六、时间片与低功耗"></a>六、时间片与低功耗</h2><ul>
 <li>同优先级时间片：tick 到来时轮转链表头到尾；使同优先级公平。</li>
 <li>Tickless Idle：configUSE_TICKLESS_IDLE&#x3D;1，空闲时暂停节拍定时器，设定低功耗定时器在下一个唤醒点触发，醒来补偿丢失的 tick，显著降功耗。</li>
 </ul>
-<p>七、内存管理</p>
-<ol>
-<li>任务栈与 TCB</li>
-</ol>
-<ul>
+<h2 id="七、内存管理"><a href="#七、内存管理" class="headerlink" title="七、内存管理"></a>七、内存管理</h2><h3 id="1-任务栈与-TCB"><a href="#1-任务栈与-TCB" class="headerlink" title="1) 任务栈与 TCB"></a>1) 任务栈与 TCB</h3><ul>
 <li>动态分配：xTaskCreate 使用 pvPortMalloc 为 TCB 和栈分配内存。</li>
 <li>静态分配：xTaskCreateStatic 由用户提供 TCB 与栈缓冲（configSUPPORT_STATIC_ALLOCATION&#x3D;1）。</li>
 <li>栈大小以“栈宽度单位”（StackType_t）指定，依端口是 4&#x2F;8 字节。</li>
 <li>栈溢出检测：configCHECK_FOR_STACK_OVERFLOW（模式 1&#x2F;2）+ vApplicationStackOverflowHook。</li>
 </ul>
-<ol start="2">
-<li>内核对象</li>
-</ol>
-<ul>
+<h3 id="2-内核对象"><a href="#2-内核对象" class="headerlink" title="2) 内核对象"></a>2) 内核对象</h3><ul>
 <li>队列、信号量、事件组、定时器等均可动态或静态创建（如 xQueueCreateStatic、xSemaphoreCreateBinaryStatic）。</li>
 <li>定时器服务任务与空闲任务可由应用提供静态内存：vApplicationGetTimerTaskMemory&#x2F;vApplicationGetIdleTaskMemory。</li>
 </ul>
-<ol start="3">
-<li>堆实现（heap_1..heap_5）</li>
-</ol>
-<ul>
+<h3 id="3-堆实现（heap-1-heap-5）"><a href="#3-堆实现（heap-1-heap-5）" class="headerlink" title="3) 堆实现（heap_1..heap_5）"></a>3) 堆实现（heap_1..heap_5）</h3><ul>
 <li>heap_1：仅分配不释放，最简单、无碎片，适合启动期一次性分配。</li>
 <li>heap_2：带释放，简单空闲链表，不合并相邻空闲块，易碎片。</li>
 <li>heap_3：封装标准库 malloc&#x2F;free，线程安全由 FreeRTOS 临界区保护，但实时性取决于 libc。</li>
@@ -223,16 +219,12 @@
 <li>选择方式：在 FreeRTOSConfig.h 通过包含相应的 portable&#x2F;MemMang&#x2F;heap_x.c 实现一个 pvPortMalloc&#x2F;vPortFree。</li>
 <li>线程安全：内核通过临界区保护 pvPortMalloc&#x2F;vPortFree，使其在任务&#x2F;中断上下文安全（FromISR 不允许分配）。</li>
 </ul>
-<ol start="4">
-<li>注意与建议</li>
-</ol>
-<ul>
+<h3 id="4-注意与建议"><a href="#4-注意与建议" class="headerlink" title="4) 注意与建议"></a>4) 注意与建议</h3><ul>
 <li>中断上下文禁止调用会触发阻塞或动态分配的 API；ISR 使用 FromISR 变体，且不能调用 pvPortMalloc。</li>
 <li>控制碎片：优先使用静态创建或集中在系统初始化阶段一次性动态创建；若需运行期创建&#x2F;删除，选择 heap_4&#x2F;5。</li>
 <li>监控：启用 configUSE_MALLOC_FAILED_HOOK 与 vApplicationMallocFailedHook；配置 uxTaskGetStackHighWaterMark 监控栈余量。</li>
 </ul>
-<p>八、常用配置项速览</p>
-<ul>
+<h2 id="八、常用配置项速览"><a href="#八、常用配置项速览" class="headerlink" title="八、常用配置项速览"></a>八、常用配置项速览</h2><ul>
 <li>configUSE_PREEMPTION、configUSE_TIME_SLICING、configTICK_RATE_HZ、configMAX_PRIORITIES</li>
 <li>configSUPPORT_STATIC_ALLOCATION、configSUPPORT_DYNAMIC_ALLOCATION</li>
 <li>configCHECK_FOR_STACK_OVERFLOW、configUSE_IDLE_HOOK、configUSE_TICK_HOOK、configUSE_TICKLESS_IDLE</li>
@@ -240,8 +232,7 @@
 <li>configQUEUE_REGISTRY_SIZE（队列注册调试）、configASSERT（断言）</li>
 <li>端口相关：configCPU_CLOCK_HZ、configPRIO_BITS、configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY、configKERNEL_INTERRUPT_PRIORITY、configMAX_SYSCALL_INTERRUPT_PRIORITY</li>
 </ul>
-<p>九、常见排障思路</p>
-<ul>
+<h2 id="九、常见排障思路"><a href="#九、常见排障思路" class="headerlink" title="九、常见排障思路"></a>九、常见排障思路</h2><ul>
 <li>任务不切换：检查中断优先级配置（尤其 Cortex-M 的 BASEPRI）、SysTick&#x2F;PendSV 使能、portYIELD_FROM_ISR 的使用。</li>
 <li>高优先级“饿死”低优先级：确认是否需要 time slicing 或在高优先级任务里适当阻塞&#x2F;让出。</li>
 <li>栈溢出&#x2F;硬 Fault：开启栈溢出检测、增大疑似任务栈、检查递归&#x2F;大数组。</li>

@@ -50,7 +50,7 @@
 <script src="/js/fancybox.js"></script>
 
 
-<meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
+<meta name="generator" content="Hexo 8.1.2"><link rel="alternate" href="/atom.xml" title="Xiao's Tech Blog" type="application/atom+xml">
 </head>
 
 
@@ -125,7 +125,7 @@
     <p>有如下C代码：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> b = <span class="number">2</span>;</span><br><span class="line"><span class="type">char</span> c1 = <span class="number">3</span>;</span><br><span class="line"><span class="type">char</span> c2 = <span class="number">4</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;a: %p\n&quot;</span>,&amp;a);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;b: %p\n&quot;</span>,&amp;b);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;c1:%p\n&quot;</span>,&amp;c1);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;c2:%p\n&quot;</span>,&amp;c2);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出类似这样的地址顺序：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">c1: 0xaaaac23d1010</span><br><span class="line">c2: 0xaaaac23d1011</span><br><span class="line">a: 0xaaaac23d1014</span><br><span class="line">b: 0xaaaac23d1018</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">c1: 0xaaaac23d1010</span><br><span class="line">c2: 0xaaaac23d1011</span><br><span class="line">a: 0xaaaac23d1014</span><br><span class="line">b: 0xaaaac23d1018</span><br></pre></td></tr></table></figure>
 
 <p>这是为什么呢？</p>
 <h3 id="1-变量分布与对齐"><a href="#1-变量分布与对齐" class="headerlink" title="1. 变量分布与对齐"></a>1. 变量分布与对齐</h3><ul>
